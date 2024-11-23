@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "265976250178",
+    "project_id": "fir-authentication-2e04a",
+    "storage_bucket": "fir-authentication-2e04a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265976250178:android:a766243419f176f6b5d2db",
+        "android_client_info": {
+          "package_name": "com.example.bookgenie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAG8b1J0WEL-UZFsQx-znRoNJMYWwS_5d0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
