@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_nav"
+    app:startDestination="@id/onboardingFragment">
+
+    <fragment
+        android:id="@+id/logInFragment"
+        android:name="com.example.bookgenie.LogInFragment"
+        android:label="LogInFragment" />
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.bookgenie.OnboardingFragment"
+        android:label="fragment_onboarding"
+        tools:layout="@layout/fragment_onboarding" >
+        <action
+            android:id="@+id/signUpAction"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/logInAction"
+            app:destination="@id/logInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.bookgenie.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" />
+</navigation>

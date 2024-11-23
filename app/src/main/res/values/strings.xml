@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">bookGinnie</string>
+    <string name="welcomeText">Welcome to bookGinnie! Discover your next favourite book.</string>
+    <string name="logInButtonText">Log In</string>
+    <string name="signUpButtonText">Sign Up</string>
+    <string name="logInWelcomeBackText">Welcome Back</string>
+    <string name="logInText">Log in to your account using email or social account.</string>
+    <string name="signUpCreateText">Create New Account</string>
+    <string name="signUpText">Enter your details to create account.</string>
+
+
+</resources>
