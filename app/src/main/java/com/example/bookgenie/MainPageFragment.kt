@@ -69,7 +69,12 @@ class MainPageFragment : Fragment() {
     }
 
     private fun search(searchWord: String) {
-        Log.e("search a book", searchWord)
+        val filteredList = bookList.filter { book ->
+            book.title.contains(searchWord, ignoreCase = true) ||
+                    book.authors.toString().contains(searchWord, ignoreCase = true)
+        }
+
+        adapter.updateList(filteredList)
     }
 
 

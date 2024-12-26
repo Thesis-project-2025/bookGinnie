@@ -43,5 +43,10 @@ class BookAdapter(var mContext: Context, var bookList: List<Books>) : RecyclerVi
         }
     }
 
+    fun updateList(newBooks: List<Books>) {
+        bookList = newBooks
+        notifyDataSetChanged()
+    }
+
     }
 

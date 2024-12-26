@@ -34,6 +34,7 @@ private lateinit var binding: FragmentBookDetailsBinding
         binding.tvPages.text = book.num_pages.toString()
         binding.tvYear.text = book.publication_year.toString()
         binding.tvRating.text = book.average_rating.toString()
+        binding.tvGenres.text = book.genres.joinToString(", ")
 
         val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView2
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
