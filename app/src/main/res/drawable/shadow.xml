@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow layer with a subtle offset -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/wine" />  <!-- A semi-transparent black shadow color -->
+            <corners android:radius="3dp" />  <!-- Soft corners for the shadow -->
+            <padding
+                android:left="50dp"
+                android:right="50dp"
+                android:top="50dp"
+                android:bottom="50dp"/>  <!-- Padding to offset the shadow and make it subtle -->
+        </shape>
+    </item>
+</layer-list>

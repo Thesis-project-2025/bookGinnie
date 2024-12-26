@@ -8,7 +8,11 @@
     <fragment
         android:id="@+id/logInFragment"
         android:name="com.example.bookgenie.LogInFragment"
-        android:label="LogInFragment" />
+        android:label="LogInFragment" >
+        <action
+            android:id="@+id/loginToMainPage"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/onboardingFragment"
         android:name="com.example.bookgenie.OnboardingFragment"
@@ -25,5 +29,52 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.bookgenie.SignUpFragment"
         android:label="fragment_sign_up"
-        tools:layout="@layout/fragment_sign_up" />
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/signupToMainPage"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainPageFragment"
+        android:name="com.example.bookgenie.MainPageFragment"
+        android:label="fragment_main_page"
+        tools:layout="@layout/fragment_main_page" >
+        <action
+            android:id="@+id/mainToBookDetails"
+            app:destination="@id/bookDetailsFragment" />
+        <action
+            android:id="@+id/mainPageToSettings"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/mainPageToUserInfo"
+            app:destination="@id/userInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookDetailsFragment"
+        android:name="com.example.bookgenie.BookDetailsFragment"
+        android:label="fragment_book_details"
+        tools:layout="@layout/fragment_book_details" >
+        <argument
+            android:name="book"
+            app:argType="com.example.bookgenie.Books" />
+        <action
+            android:id="@+id/bookDetailsToSettings"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/bookDetailsToUserInfo"
+            app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/bookDetailsToMainPage"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.bookgenie.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="com.example.bookgenie.UserInfoFragment"
+        android:label="fragment_user_info"
+        tools:layout="@layout/fragment_user_info" />
 </navigation>

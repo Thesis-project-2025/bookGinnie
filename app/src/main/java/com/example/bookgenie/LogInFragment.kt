@@ -39,7 +39,7 @@ class LogInFragment : Fragment() {
                         Snackbar.make(binding.emailLogIn, "Successfully logged in!", Snackbar.LENGTH_SHORT)
                             .show()
                         Navigation.findNavController(binding.root)
-                            .navigate(R.id.onboardingFragment)  // homeFragment'i kendi ana ekranınızla değiştirin
+                            .navigate(R.id.loginToMainPage)  // homeFragment'i kendi ana ekranınızla değiştirin
                     } else {
                         // Hata mesajı göster
                         Toast.makeText(context, "Giriş Yapılamadı: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
