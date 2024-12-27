@@ -76,7 +76,31 @@ class MainPageFragment : Fragment() {
         }
         adapter.updateList(filteredList)
     }
+    private fun handleStringOrNaN(value: Any?): String {
+        return when (value) {
+            is String -> value // Eğer String ise doğrudan döndür
+            is Number -> {
+                val doubleValue = value.toDouble() // Number'ı Double'a dönüştür
+                if (doubleValue.isNaN()) "" else doubleValue.toString()
+            }
+            else -> "" // Diğer durumlarda boş değer döndür
+        }
+    }
 
+    private fun convertStringOrIntToInt(value: Any?): Int {
+        return when (value) {
+            is String -> value.toIntOrNull() ?: 0
+            is Number -> value.toInt()
+            else -> 0
+        }
+    }
+    private fun convertStringOrIntToDouble(value: Any?): Double {
+        return when (value) {
+            is String -> value.toDoubleOrNull() ?: 0.0
+            is Number -> value.toDouble()
+            else -> 0.0
+        }
+    }
     private fun fetchBooksFromFirestore() {
         if (isLoading || isLastPage) return // Zaten yükleme yapılıyorsa veya veri bitmişse devam etme
         isLoading = true
@@ -91,31 +115,32 @@ class MainPageFragment : Fragment() {
 
         query.get()
             .addOnSuccessListener { documents ->
+                Log.d("Firestore", "Çekilen veri sayısı: ${documents.size()}")
                 if (!documents.isEmpty) {
                     lastVisibleDocument = documents.documents.last()
                     for (document in documents) {
-                        val asin = document.getString("asin") ?: ""
-                        val authors = document.getLong("authors")?.toInt() ?: 0
-                        val average_rating = document.getDouble("average_rating") ?: 0.0
-                        val book_id = document.getLong("book_id")?.toInt() ?: 0
-                        val country_code = document.getString("country_code") ?: ""
-                        val description = document.getString("description") ?: ""
-                        val edition_information = document.getString("edition_information") ?: ""
-                        val format = document.getString("format") ?: ""
+                        val asin = handleStringOrNaN(document.get("asin"))
+                        val authors = convertStringOrIntToInt(document.get("authors"))
+                        val average_rating = convertStringOrIntToDouble(document.get("average_rating"))
+                        val book_id = convertStringOrIntToInt(document.get("book_id"))
+                        val country_code = handleStringOrNaN(document.get("country_code"))
+                        val description = handleStringOrNaN(document.get("description"))
+                        val edition_information = handleStringOrNaN(document.get("edition_information"))
+                        val format = handleStringOrNaN(document.get("format"))
                         val genres = document.get("genres") as? List<String> ?: emptyList()
-                        val imageUrl = document.getString("image_url") ?: ""
-                        val is_ebook = document.getBoolean("is_ebook") ?: false
-                        val isbn = document.getString("isbn") ?: ""
-                        val isbn13 = document.getString("isbn13") ?: ""
-                        val kindle_asin = document.getString("kindle_asin") ?: ""
-                        val language_code = document.getString("language_code") ?: ""
-                        val num_pages = document.getLong("num_pages")?.toInt() ?: 0
+                        val imageUrl = handleStringOrNaN(document.get("image_url"))
+                        val is_ebook = document.get("is_ebook") as? Boolean ?: false
+                        val isbn = handleStringOrNaN(document.get("isbn"))
+                        val isbn13 = handleStringOrNaN(document.get("isbn13"))
+                        val kindle_asin = handleStringOrNaN(document.get("kindle_asin"))
+                        val language_code = handleStringOrNaN(document.get("language_code"))
+                        val num_pages = convertStringOrIntToInt(document.get("num_pages"))
                         val publication_day = document.get("publication_day") as? List<String> ?: emptyList()
-                        val publication_month = document.getLong("publication_month")?.toInt() ?: 0
-                        val publication_year = document.getLong("publication_year")?.toInt() ?: 0
-                        val publisher = document.getString("publisher") ?: ""
-                        val title = document.getString("title") ?: ""
-                        val title_without_series = document.getString("title_without_series") ?: ""
+                        val publication_month = convertStringOrIntToInt(document.get("publication_month"))
+                        val publication_year = convertStringOrIntToInt(document.get("publication_year"))
+                        val publisher = handleStringOrNaN(document.get("publisher"))
+                        val title = handleStringOrNaN(document.get("title"))
+                        val title_without_series = handleStringOrNaN(document.get("title_without_series"))
 
                         bookList.add(
                             Books(
@@ -158,20 +183,27 @@ class MainPageFragment : Fragment() {
             }
     }
 
+
     private fun setupRecyclerViewScrollListener() {
         binding.bookRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
-                val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
-                val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
+                val visibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
 
-                // RecyclerView'ın en aşağısına gelindiğinde yeni veri çek
-                if (!isLoading && !isLastPage && lastVisibleItem >= bookList.size - 1) {
+                // En son görünen elemanı bul
+                val lastVisibleItem = visibleItemPositions.maxOrNull() ?: 0
+
+                // Toplam öğe sayısını al
+                val totalItemCount = layoutManager.itemCount
+
+                // Eğer en son görünen öğe toplam öğe sayısından 1 eksikse, veri çek
+                if (!isLoading && !isLastPage && lastVisibleItem >= totalItemCount - 1) {
                     fetchBooksFromFirestore()
                 }
             }
         })
     }
+
 }
