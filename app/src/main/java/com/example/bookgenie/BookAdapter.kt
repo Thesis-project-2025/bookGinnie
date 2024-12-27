@@ -27,7 +27,7 @@ class BookAdapter(var mContext: Context, var bookList: List<Books>) : RecyclerVi
         val t = holder.tasarim // View Binding reference
 
         // Set the title of the book
-        t.textViewTitle.text = book.title
+        //t.textViewTitle.text = book.title
 
         // Load the book's image using Glide
         Glide.with(mContext)
