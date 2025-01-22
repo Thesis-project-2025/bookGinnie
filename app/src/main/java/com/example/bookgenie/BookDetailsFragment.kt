@@ -30,7 +30,8 @@ private lateinit var binding: FragmentBookDetailsBinding
 
         // Setting the title of the book
         binding.tvBook.text = book.title
-        binding.tvAuthor.text = book.authors.toString()
+        binding.tvAuthor.text = book.author_name
+        binding.tvDescription.text = book.description
         binding.tvPages.text = book.num_pages.toString()
         binding.tvYear.text = book.publication_year.toString()
         binding.tvRating.text = book.average_rating.toString()

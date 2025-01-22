@@ -2,13 +2,12 @@ package com.example.bookgenie
 
 import java.io.Serializable
 
-data class Books(val asin:String,
+data class Books(
                  val authors: Int,
+                 val author_name: String,
                  val average_rating: Double,
                  val book_id: Int,
-                 val country_code:String,
                  val description: String,
-                 val edition_information:String,
                  val format: String,
                  val genres: List<String>,
                  val imageUrl: String,
@@ -23,7 +22,6 @@ data class Books(val asin:String,
                  val publication_year:Int,
                  val publisher:String,
                  val title:String,
-                 val title_without_series: String
 ) : Serializable{
 
 

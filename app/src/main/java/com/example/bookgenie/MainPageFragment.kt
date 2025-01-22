@@ -334,13 +334,11 @@ class MainPageFragment : Fragment() {
     }
 
     private fun parseDocumentToBook(document: DocumentSnapshot): Books {
-        val asin = handleStringOrNaN(document.get("asin"))
         val authors = convertStringOrIntToInt(document.get("authors"))
+        val author_name = handleStringOrNaN(document.get("author_name"))
         val average_rating = convertStringOrIntToDouble(document.get("average_rating"))
         val book_id = convertStringOrIntToInt(document.get("book_id"))
-        val country_code = handleStringOrNaN(document.get("country_code"))
         val description = handleStringOrNaN(document.get("description"))
-        val edition_information = handleStringOrNaN(document.get("edition_information"))
         val format = handleStringOrNaN(document.get("format"))
         val genres = document.get("genres") as? List<String> ?: emptyList()
         val imageUrl = handleStringOrNaN(document.get("image_url"))
@@ -355,16 +353,13 @@ class MainPageFragment : Fragment() {
         val publication_year = convertStringOrIntToInt(document.get("publication_year"))
         val publisher = handleStringOrNaN(document.get("publisher"))
         val title = handleStringOrNaN(document.get("title"))
-        val title_without_series = handleStringOrNaN(document.get("title_without_series"))
 
         return Books(
-            asin,
             authors,
+            author_name,
             average_rating,
             book_id,
-            country_code,
             description,
-            edition_information,
             format,
             genres,
             imageUrl,
@@ -378,8 +373,7 @@ class MainPageFragment : Fragment() {
             publication_month,
             publication_year,
             publisher,
-            title,
-            title_without_series
+            title
         )
     }
 }

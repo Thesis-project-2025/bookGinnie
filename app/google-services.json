@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "265976250178",
-    "project_id": "fir-authentication-2e04a",
-    "storage_bucket": "fir-authentication-2e04a.firebasestorage.app"
+    "project_number": "1034779602265",
+    "project_id": "bookgenie-a4332",
+    "storage_bucket": "bookgenie-a4332.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:265976250178:android:a766243419f176f6b5d2db",
+        "mobilesdk_app_id": "1:1034779602265:android:c6713d19c15cd7884fb048",
         "android_client_info": {
           "package_name": "com.example.bookgenie"
         }
@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAG8b1J0WEL-UZFsQx-znRoNJMYWwS_5d0"
+          "current_key": "AIzaSyCxR3kCiArjWq7iV3u0kQWGlxIRjE-zOgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034779602265:android:3deaae23a48fe5c24fb048",
+        "android_client_info": {
+          "package_name": "com.example.bookgenir"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxR3kCiArjWq7iV3u0kQWGlxIRjE-zOgw"
         }
       ],
       "services": {
