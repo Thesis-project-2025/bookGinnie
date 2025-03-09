@@ -48,6 +48,9 @@
         <action
             android:id="@+id/mainPageToUserInfo"
             app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/action_mainPageFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookDetailsFragment"
@@ -66,6 +69,12 @@
         <action
             android:id="@+id/bookDetailsToMainPage"
             app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/action_bookDetailsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_bookDetailsFragment_to_searchFragment2"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -77,4 +86,22 @@
         android:name="com.example.bookgenie.UserInfoFragment"
         android:label="fragment_user_info"
         tools:layout="@layout/fragment_user_info" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.bookgenie.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/searchToBookDetails"
+            app:destination="@id/bookDetailsFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
+    </fragment>
 </navigation>

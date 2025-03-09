@@ -2,8 +2,11 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/</item>
+        <item>@font/battambang</item>
+        <item>@font/expletus_sans_semibold</item>
         <item>@font/libre_baskerville</item>
         <item>@font/libre_baskerville_bold</item>
         <item>@font/noto_sans</item>
+        <item>@font/nunito_bold</item>
     </array>
 </resources>

@@ -2,9 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="wine">#9e2854</color>
+    <color name="wine">#410000</color>
+    <color name="darkwine">#340000</color>
+    <color name="darkdarkwine">#1f0902</color>
+    <color name="darkdarkdarkwine">#121010</color>
+    <color name="lightwine">#540101</color>
     <color name="beige">#eaeae0</color>
     <color name="gray">#64616d</color>
     <color name="lightBeige">#f0f0eb</color>
+    <color name="darkBeige">#cacac2</color>
+    <color name="darkdarkBeige">#96968f</color>
 
 </resources>

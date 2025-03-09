@@ -24,29 +24,43 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/beige">
+                android:background="@color/darkdarkdarkwine">
 
                 <!-- Toolbar -->
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbarBookDetails"
                     android:layout_width="0dp"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/wine"
+                    android:background="@color/darkdarkwine"
                     android:theme="?attr/actionBarTheme"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                <!-- Book Image -->
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:titleTextColor="@color/beige" />
+
+                <!-- Background Image (Blurred) -->
+                <ImageView
+                    android:id="@+id/ivBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/toolbarBookDetails" />
+
+                <!-- Book Image (Invisible but positioned over the background) -->
                 <ImageView
                     android:id="@+id/ivBook"
                     android:layout_width="200dp"
-                    android:layout_height="350dp"
+                    android:layout_height="260dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/shadow"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="20dp"
                     android:padding="10dp"
+                    android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/toolbarBookDetails" />
 
@@ -60,12 +74,12 @@
                     android:layout_marginEnd="16dp"
                     android:text="Book title"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/darkBeige"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ivBook" />
+                    app:layout_constraintTop_toBottomOf="@+id/ivBackground" />
 
                 <!-- Author Name -->
                 <TextView
@@ -77,14 +91,63 @@
                     android:layout_marginEnd="16dp"
                     android:text="Book author"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/darkBeige"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvBook" />
 
-                <!-- Number of Pages -->
+                <!-- Yıldızlar (Rating) -->
+                <LinearLayout
+                    android:id="@+id/llRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvAuthor">
 
+                    <!-- 5 Boş Yıldız -->
+                    <ImageView
+                        android:id="@+id/star1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_star_empty" />
+
+                    <ImageView
+                        android:id="@+id/star2"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_star_empty" />
+
+                    <ImageView
+                        android:id="@+id/star3"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_star_empty" />
+
+                    <ImageView
+                        android:id="@+id/star4"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_star_empty" />
+
+                    <ImageView
+                        android:id="@+id/star5"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_star_empty" />
+                </LinearLayout>
+
+                <!-- Description -->
                 <TextView
                     android:id="@+id/tvDescription"
                     android:layout_width="0dp"
@@ -94,125 +157,74 @@
                     android:layout_marginEnd="16dp"
                     android:text="Description"
                     android:textAlignment="center"
-                    android:textColor="#000000"
+                    android:textColor="@color/darkBeige"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvAuthor" />
+                    app:layout_constraintTop_toBottomOf="@id/llRating" />
 
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Number of pages:"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
-
+                <!-- Pages, Year, Rating, and Genres TextViews -->
                 <TextView
                     android:id="@+id/tvPages"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="60dp"
-                    android:text="100"
-                    android:textColor="#000000"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Pages"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkBeige"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/textView9"
-                    app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
-
-                <!-- Publication Year -->
-                <TextView
-                    android:id="@+id/textView11"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Publication Year:"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvPages" />
+                    app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
                 <TextView
                     android:id="@+id/tvYear"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="60dp"
-                    android:text="2024"
-                    android:textColor="#000000"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Year"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkBeige"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/textView11"
-                    app:layout_constraintTop_toBottomOf="@id/tvPages" />
-
-                <!-- Average Rating -->
-                <TextView
-                    android:id="@+id/textView12"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Average Rating:"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvYear" />
+                    app:layout_constraintTop_toBottomOf="@id/tvPages" />
 
                 <TextView
                     android:id="@+id/tvRating"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="60dp"
-                    android:text="4.5"
-                    android:textColor="#000000"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Rating"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkBeige"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView12"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvYear" />
 
                 <TextView
                     android:id="@+id/tvGenres"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="60dp"
-                    android:layout_marginBottom="50dp"
-                    android:text="TextView"
-                    android:textColor="#000000"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Genres"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkBeige"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/textView13"
-                    app:layout_constraintTop_toBottomOf="@+id/tvRating" />
-
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="60dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="50dp"
-                    android:text="Genres:"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView12" />
+                    app:layout_constraintTop_toBottomOf="@id/tvRating" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
@@ -222,6 +234,10 @@
             android:id="@+id/bottomNavigationView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@color/darkdarkwine"
+            app:itemIconTint="@color/beige"
+            app:itemTextColor="@color/beige"
+            app:labelVisibilityMode="unlabeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -2,290 +2,195 @@ package com.example.bookgenie
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import android.widget.EditText
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.bookgenie.databinding.FragmentMainPageBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import androidx.appcompat.app.AlertDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainPageFragment : Fragment() {
     private lateinit var binding: FragmentMainPageBinding
-    private lateinit var adapter: BookAdapter
-    private val bookList = ArrayList<Books>()
     private val firestore = FirebaseFirestore.getInstance()
-    private var lastVisibleDocument: DocumentSnapshot? = null
-    private var isLoading = false
-    private var isLastPage = false
-    private var isSearchMode = false
-    private var searchQuery: String? = null
+
+    // Search functionality
+    private lateinit var searchAdapter: BookAdapter
+    private val searchBookList = ArrayList<Books>()
     private var lastVisibleSearchDocument: DocumentSnapshot? = null
-    private val booksPerPage = 2
-    private val genreList = listOf(    "Fiction", "Romance", "Nonfiction", "Fantasy", "Contemporary", "Mystery",
-        "Audiobook", "Young Adult", "Historical Fiction", "Childrens", "Historical",
-        "Classics", "Science Fiction", "History", "Thriller", "Paranormal", "Crime",
-        "Novels", "Literature", "Humor", "Contemporary Romance", "Biography",
-        "Adventure", "Adult", "Short Stories", "Graphic Novels", "Mystery Thriller",
-        "Horror", "Comics", "Suspense", "Middle Grade", "Chick Lit", "Picture Books",
-        "Memoir", "Philosophy", "Magic", "Christian", "Urban Fantasy", "Erotica",
-        "Animals", "Science Fiction Fantasy", "Politics", "Religion", "Paranormal Romance",
-        "M M Romance", "Literary Fiction", "Reference", "LGBT", "Self Help", "Psychology",
-        "Science", "Historical Romance", "Poetry", "Realistic Fiction", "Vampires",
-        "Dystopia", "British Literature", "War", "School", "Manga", "Graphic Novels Comics",
-        "Spirituality", "France", "Family", "Art", "Biography Memoir", "New Adult",
-        "Christian Fiction", "Business", "Military Fiction", "Adult Fiction", "Travel",
-        "Supernatural", "High Fantasy", "Teen", "American", "Comic Book", "Drama", "Essays",
-        "Food", "Romantic Suspense", "Anthologies", "Comedy", "Music", "Sports",
-        "Christianity", "Novella", "Autobiography", "Superheroes", "Shapeshifters",
-        "Mythology", "Detective", "Storytime", "Westerns", "Theology", "Cozy Mystery",
-        "BDSM", "Action", "Juvenile", "Regency", "Feminism") // Örnek genre listesi
-    private val selectedGenres = mutableListOf<String>()
+    private var isSearchLoading = false
+    private var isSearchLastPage = false
+    private var searchQuery: String? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    // Category adapters and data
+    private lateinit var topRatedAdapter: BookCategoryAdapter
+    private lateinit var actionAdapter: BookCategoryAdapter
+    private lateinit var fictionAdapter: BookCategoryAdapter
+    private lateinit var childrenAdapter: BookCategoryAdapter
+
+    private val topRatedBooks = ArrayList<Books>()
+    private val actionBooks = ArrayList<Books>()
+    private val fictionBooks = ArrayList<Books>()
+    private val childrenBooks = ArrayList<Books>()
+
+    private var lastVisibleTopRated: DocumentSnapshot? = null
+    private var lastVisibleAction: DocumentSnapshot? = null
+    private var lastVisibleFiction: DocumentSnapshot? = null
+    private var lastVisibleChildren: DocumentSnapshot? = null
+
+    private var isTopRatedLoading = false
+    private var isActionLoading = false
+    private var isFictionLoading = false
+    private var isChildrenLoading = false
+
+    private val booksPerPage = 5
+    private var isInSearchMode = false
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentMainPageBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding.toolbarMainPage.title = "bookGenie"
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        // SearchView dinleyicisi ekleme
-        binding.searchMainpage.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        setupSearchView()
+        setupBackPressHandler()
+        setupRecyclerViews()
+        setupBottomNavigation()
+
+        // Load initial data for categories
+        loadTopRatedBooks()
+        loadActionBooks()
+        loadFictionBooks()
+        loadChildrenBooks()
+    }
+
+    private fun setupSearchView() {
+        val searchView = binding.searchMainpage
+        val searchEditText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+
+        searchEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
+        searchEditText.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
+
+        // Always switch to search mode when the search view gains focus
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                switchToSearchMode()
+                Log.d("SearchMode", "Switched to search mode due to focus")
+            }
+        }
+
+        // Add debounce to avoid too many queries
+        var searchJob: Job? = null
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
+                // Cancel previous job if it's still active
+                searchJob?.cancel()
+
                 if (newText.isEmpty()) {
-                    resetToMainPage()
+                    clearSearchResults()
+                    Log.d("SearchMode", "Cleared search results")
                 } else {
-                    switchToSearchMode(newText.trim())
+                    switchToSearchMode() // Ensure we're in search mode
+
+                    // Use debounce to prevent firing too many queries
+                    searchJob = CoroutineScope(Dispatchers.Main).launch {
+                        delay(300) // Wait for 300ms before executing search
+                        clearSearchResults() // Clear before new search
+                        lastVisibleSearchDocument = null // Reset for new search
+                        searchBooks(newText.trim())
+                        Log.d("SearchMode", "Searching for: $newText")
+                    }
                 }
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                if (query.isEmpty()) {
-                    resetToMainPage()
-                } else {
-                    switchToSearchMode(query.trim())
+                if (query.isNotEmpty()) {
+                    switchToSearchMode() // Ensure we're in search mode
+                    clearSearchResults() // Clear before new search
+                    lastVisibleSearchDocument = null // Reset for new search
+                    searchBooks(query.trim())
+                    Log.d("SearchMode", "Search submitted: $query")
                 }
                 return true
             }
         })
+    }
 
+    private fun setupBackPressHandler() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (isInSearchMode) {
+                        switchToCategoriesMode()
+                    } else {
+                        isEnabled = false
+                        requireActivity().onBackPressed()
+                    }
+                }
+            }
+        )
+    }
+
+    private fun setupRecyclerViews() {
+        // Set up search results RecyclerView
         binding.bookRV.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        adapter = BookAdapter(requireContext(), bookList)
-        binding.bookRV.adapter = adapter
-        binding.filterButton.setOnClickListener {
-            showFilterDialog()
-        }
-        setupRecyclerViewScrollListener()
-        fetchBooksFromFirestore()
+        searchAdapter = BookAdapter(requireContext(), searchBookList)
+        binding.bookRV.adapter = searchAdapter
 
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.idMainPage -> true
-                R.id.idSettings -> {
-                    findNavController().navigate(R.id.mainPageToSettings)
-                    true
-                }
-                R.id.idUserInfo -> {
-                    findNavController().navigate(R.id.mainPageToUserInfo)
-                    true
-                }
-                else -> false
-            }
-        }
+        setupSearchScrollListener()
 
-        return binding.root
-    }
-    private fun showFilterDialog() {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Filter by Genre")
+        // Set up category RecyclerViews
+        setupCategoryRecyclerView(binding.rvTopRatedBooks) { loadTopRatedBooks() }
+        setupCategoryRecyclerView(binding.rvActionBooks) { loadActionBooks() }
+        setupCategoryRecyclerView(binding.rvFictionBooks) { loadFictionBooks() }
+        setupCategoryRecyclerView(binding.rvChildrenBooks) { loadChildrenBooks() }
 
-        val selected = BooleanArray(genreList.size) // Checkbox durumlarını takip için
-        builder.setMultiChoiceItems(genreList.toTypedArray(), selected) { _, which, isChecked ->
-            if (isChecked) {
-                selectedGenres.add(genreList[which])
-            } else {
-                selectedGenres.remove(genreList[which])
-            }
-        }
+        // Initialize adapters
+        topRatedAdapter = BookCategoryAdapter(requireContext(), topRatedBooks) { loadTopRatedBooks() }
+        actionAdapter = BookCategoryAdapter(requireContext(), actionBooks) { loadActionBooks() }
+        fictionAdapter = BookCategoryAdapter(requireContext(), fictionBooks) { loadFictionBooks() }
+        childrenAdapter = BookCategoryAdapter(requireContext(), childrenBooks) { loadChildrenBooks() }
 
-        builder.setPositiveButton("Apply") { _, _ ->
-            applyGenreFilter()
-        }
-
-        builder.setNegativeButton("Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.create().show()
-    }
-    private fun applyGenreFilter() {
-        if (selectedGenres.isEmpty()) {
-            resetToMainPage()
-            return
-        }
-
-        isSearchMode = false
-        bookList.clear()
-        adapter.notifyDataSetChanged()
-        isLastPage = false
-        lastVisibleDocument = null
-
-        fetchBooksByGenres()
+        binding.rvTopRatedBooks.adapter = topRatedAdapter
+        binding.rvActionBooks.adapter = actionAdapter
+        binding.rvFictionBooks.adapter = fictionAdapter
+        binding.rvChildrenBooks.adapter = childrenAdapter
     }
 
-    private fun fetchBooksByGenres() {
-        if (isLoading || isLastPage) return
-        isLoading = true
-        binding.progressBar.visibility = View.VISIBLE
-
-        val query = firestore.collection("books_data")
-            .whereArrayContainsAny("genres", selectedGenres) // İlk filtreleme "OR" mantığı
-            .limit(booksPerPage.toLong())
-
-        lastVisibleDocument?.let {
-            query.startAfter(it)
-        }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    lastVisibleDocument = documents.documents.last()
-                    for (document in documents) {
-                        val book = parseDocumentToBook(document)
-                        // İstemci tarafında "AND" kontrolü
-                        if (selectedGenres.all { genre -> book.genres.contains(genre) }) {
-                            bookList.add(book)
-                        }
-                    }
-                    adapter.notifyDataSetChanged()
-                } else {
-                    isLastPage = true
-                }
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error fetching books by genre: ${exception.message}")
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
+    private fun setupCategoryRecyclerView(recyclerView: RecyclerView, loadMoreCallback: () -> Unit) {
+        recyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
     }
 
-
-
-
-    private fun resetToMainPage() {
-        isSearchMode = false
-        searchQuery = null
-        lastVisibleSearchDocument = null
-        bookList.clear()
-        adapter.notifyDataSetChanged()
-        lastVisibleDocument = null
-        isLastPage = false
-        fetchBooksFromFirestore()
-    }
-
-    private fun switchToSearchMode(query: String) {
-        isSearchMode = true
-        searchQuery = query
-        lastVisibleSearchDocument = null
-        bookList.clear()
-        adapter.notifyDataSetChanged()
-        isLastPage = false
-        searchBooksFromFirestore(query)
-    }
-
-    private fun fetchBooksFromFirestore() {
-        if (isLoading || isLastPage) return
-        isLoading = true
-        binding.progressBar.visibility = View.VISIBLE
-
-        var query: Query = firestore.collection("books_data")
-            .orderBy("title")
-            .limit(booksPerPage.toLong())
-
-        lastVisibleDocument?.let {
-            query = query.startAfter(it)
-        }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                Log.d("Firestore", "Çekilen veri sayısı: ${documents.size()}")
-                if (!documents.isEmpty) {
-                    lastVisibleDocument = documents.documents.last()
-                    for (document in documents) {
-                        val book = parseDocumentToBook(document)
-                        bookList.add(book)
-                    }
-                    adapter.notifyDataSetChanged()
-                } else {
-                    isLastPage = true
-                }
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error fetching books: ${exception.message}")
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
-    }
-
-
-    private fun searchBooksFromFirestore(searchWord: String) {
-        if (isLoading) return
-        isLoading = true
-        binding.progressBar.visibility = View.VISIBLE
-
-        // Küçük harfe çevir ve başına/sonuna gerekli wildcard'ı ekle
-        val formattedQuery = searchWord.lowercase().trim()
-
-        var query: Query = firestore.collection("books_data")
-            .orderBy("title_lowercase")
-            .startAt(formattedQuery)
-            .endAt(formattedQuery + "\uf8ff")
-            .limit(booksPerPage.toLong())
-
-        lastVisibleSearchDocument?.let {
-            query = query.startAfter(it)
-        }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                Log.d("Firestore", "Çekilen veri sayısı: ${documents.size()}")
-                if (!documents.isEmpty) {
-                    lastVisibleSearchDocument = documents.documents.last()
-                    for (document in documents) {
-                        val title = document.getString("title_lowercase") ?: ""
-                        // Arama sonucunun tüm kelimeleri içermesi gerektiğini kontrol et
-                        if (formattedQuery.split(" ").all { title.contains(it) }) {
-                            val book = parseDocumentToBook(document)
-                            bookList.add(book)
-                        }
-                    }
-                    adapter.notifyDataSetChanged()
-                } else {
-                    isLastPage = true
-                }
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error searching books: ${exception.message}")
-                isLoading = false
-                binding.progressBar.visibility = View.GONE
-            }
-    }
-
-
-    private fun setupRecyclerViewScrollListener() {
+    private fun setupSearchScrollListener() {
         binding.bookRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -295,16 +200,265 @@ class MainPageFragment : Fragment() {
                 val visibleItemCount = layoutManager.childCount
                 val firstVisibleItem = layoutManager.findFirstVisibleItemPositions(null).minOrNull() ?: 0
 
-                if (!isLoading && !isLastPage && (visibleItemCount + firstVisibleItem) >= (totalItemCount * 0.9).toInt()) {
-                    if (isSearchMode) {
-                        searchBooksFromFirestore(searchQuery ?: "")
-                    } else {
-                        fetchBooksFromFirestore()
-                    }
+                if (!isSearchLoading && !isSearchLastPage &&
+                    (visibleItemCount + firstVisibleItem) >= (totalItemCount * 0.9).toInt()) {
+                    searchQuery?.let { searchBooks(it) }
                 }
             }
         })
     }
+
+    private fun setupBottomNavigation() {
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.idMainPage -> {
+                    switchToCategoriesMode()
+                    true
+                }
+                R.id.idSettings -> {
+                    findNavController().navigate(R.id.mainPageToSettings)
+                    true
+                }
+                R.id.idProfile -> {
+                    findNavController().navigate(R.id.mainPageToUserInfo)
+                    true
+                }
+                R.id.idSearch -> {
+                    findNavController().navigate(R.id.action_mainPageFragment_to_searchFragment)
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    // Category Data Loading Functions
+
+    private fun loadTopRatedBooks() {
+        if (isTopRatedLoading) return
+        isTopRatedLoading = true
+
+        Log.d("CategoryLoading", "Loading Top Rated books")
+
+        var query = firestore.collection("books_data")
+            .orderBy("average_rating", Query.Direction.DESCENDING)
+            .limit(booksPerPage.toLong())
+
+        lastVisibleTopRated?.let { query = query.startAfter(it) }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                Log.d("CategoryLoading", "Top Rated books query returned ${documents.size()} documents")
+                if (!documents.isEmpty) {
+                    lastVisibleTopRated = documents.documents.last()
+                    for (document in documents) {
+                        val book = parseDocumentToBook(document)
+                        topRatedBooks.add(book)
+                        Log.d("CategoryLoading", "Added Top Rated book: ${book.title}")
+                    }
+                    topRatedAdapter.notifyDataSetChanged()
+                }
+                isTopRatedLoading = false
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error loading top rated books: ${exception.message}")
+                isTopRatedLoading = false
+            }
+    }
+
+    private fun loadActionBooks() {
+        if (isActionLoading) return
+        isActionLoading = true
+
+        Log.d("CategoryLoading", "Loading Action books")
+
+        var query = firestore.collection("books_data")
+            .whereArrayContains("genres", "Action")
+            .limit(booksPerPage.toLong())
+
+        lastVisibleAction?.let { query = query.startAfter(it) }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                Log.d("CategoryLoading", "Action books query returned ${documents.size()} documents")
+                if (!documents.isEmpty) {
+                    lastVisibleAction = documents.documents.last()
+                    for (document in documents) {
+                        val book = parseDocumentToBook(document)
+                        actionBooks.add(book)
+                        Log.d("CategoryLoading", "Added Action book: ${book.title}")
+                    }
+                    actionAdapter.notifyDataSetChanged()
+                }
+                isActionLoading = false
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error loading action books: ${exception.message}")
+                isActionLoading = false
+            }
+    }
+
+    private fun loadFictionBooks() {
+        if (isFictionLoading) return
+        isFictionLoading = true
+
+        Log.d("CategoryLoading", "Loading Fiction books")
+
+        var query = firestore.collection("books_data")
+            .whereArrayContains("genres", "Fiction")
+            .limit(booksPerPage.toLong())
+
+        lastVisibleFiction?.let { query = query.startAfter(it) }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                Log.d("CategoryLoading", "Fiction books query returned ${documents.size()} documents")
+                if (!documents.isEmpty) {
+                    lastVisibleFiction = documents.documents.last()
+                    for (document in documents) {
+                        val book = parseDocumentToBook(document)
+                        fictionBooks.add(book)
+                        Log.d("CategoryLoading", "Added Fiction book: ${book.title}")
+                    }
+                    fictionAdapter.notifyDataSetChanged()
+                }
+                isFictionLoading = false
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error loading fiction books: ${exception.message}")
+                isFictionLoading = false
+            }
+    }
+
+    private fun loadChildrenBooks() {
+        if (isChildrenLoading) return
+        isChildrenLoading = true
+
+        Log.d("CategoryLoading", "Loading Children books")
+
+        var query = firestore.collection("books_data")
+            .whereArrayContains("genres", "Childrens")
+            .limit(booksPerPage.toLong())
+
+        lastVisibleChildren?.let { query = query.startAfter(it) }
+
+        query.get()
+            .addOnSuccessListener { documents ->
+                Log.d("CategoryLoading", "Children books query returned ${documents.size()} documents")
+                if (!documents.isEmpty) {
+                    lastVisibleChildren = documents.documents.last()
+                    for (document in documents) {
+                        val book = parseDocumentToBook(document)
+                        childrenBooks.add(book)
+                        Log.d("CategoryLoading", "Added Children book: ${book.title}")
+                    }
+                    childrenAdapter.notifyDataSetChanged()
+                }
+                isChildrenLoading = false
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error loading children books: ${exception.message}")
+                isChildrenLoading = false
+            }
+    }
+
+    // Search Functions
+
+    private fun switchToSearchMode() {
+        if (!isInSearchMode) {
+            isInSearchMode = true
+            binding.scrollViewCategories.visibility = View.GONE
+            binding.bookRV.visibility = View.VISIBLE
+            Log.d("SearchMode", "Switched to search mode")
+        }
+    }
+
+    private fun switchToCategoriesMode() {
+        if (isInSearchMode) {
+            isInSearchMode = false
+            binding.searchMainpage.setQuery("", false)
+            binding.searchMainpage.clearFocus()
+            binding.scrollViewCategories.visibility = View.VISIBLE
+            binding.bookRV.visibility = View.GONE
+            Log.d("SearchMode", "Switched to categories mode")
+        }
+    }
+
+    private fun clearSearchResults() {
+        searchBookList.clear()
+        searchAdapter.notifyDataSetChanged()
+        lastVisibleSearchDocument = null
+        isSearchLastPage = false
+    }
+
+    private fun searchBooks(query: String) {
+        if (isSearchLoading) return
+        isSearchLoading = true
+        searchQuery = query
+
+        // Only clear previous results if this is a new search
+        if (lastVisibleSearchDocument == null) {
+            searchBookList.clear()
+            searchAdapter.notifyDataSetChanged()
+        }
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        // Format query: convert to lowercase and trim
+        val formattedQuery = query.lowercase().trim()
+        Log.d("Search", "Searching for: $formattedQuery")
+
+        var firestoreQuery: Query = firestore.collection("books_data")
+            .orderBy("title_lowercase")
+            .startAt(formattedQuery)
+            .endAt(formattedQuery + "\uf8ff")
+            .limit(booksPerPage.toLong())
+
+        lastVisibleSearchDocument?.let {
+            firestoreQuery = firestoreQuery.startAfter(it)
+        }
+
+        firestoreQuery.get()
+            .addOnSuccessListener { documents ->
+                Log.d("Search", "Search query returned ${documents.size()} documents")
+                if (!documents.isEmpty) {
+                    lastVisibleSearchDocument = documents.documents.last()
+                    val newBooks = ArrayList<Books>()
+
+                    for (document in documents) {
+                        val titleLowercase = document.getString("title_lowercase") ?: ""
+                        // Check if title contains all words in the search query
+                        if (formattedQuery.split(" ").all { titleLowercase.contains(it) }) {
+                            val book = parseDocumentToBook(document)
+                            newBooks.add(book)
+                            Log.d("Search", "Added book to results: ${book.title}")
+                        }
+                    }
+
+                    if (newBooks.isEmpty()) {
+                        Log.d("Search", "No matching books found after filtering")
+                        isSearchLastPage = documents.size() < booksPerPage
+                    } else {
+                        searchBookList.addAll(newBooks)
+                        searchAdapter.notifyDataSetChanged()
+                    }
+                } else {
+                    Log.d("Search", "No more results from Firestore")
+                    isSearchLastPage = true
+                }
+
+                isSearchLoading = false
+                binding.progressBar.visibility = View.GONE
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error searching books: ${exception.message}")
+                isSearchLoading = false
+                binding.progressBar.visibility = View.GONE
+            }
+    }
+
+    // Helper Functions
 
     private fun handleStringOrNaN(value: Any?): String {
         return when (value) {

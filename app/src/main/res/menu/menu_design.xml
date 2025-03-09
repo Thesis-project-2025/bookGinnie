@@ -4,14 +4,19 @@
 
     <item
         android:id="@+id/idMainPage"
-        android:icon="@drawable/home"
+        android:icon="@drawable/baseline_home_24_b"
         android:title="Home" />
     <item
         android:id="@+id/idSettings"
-        android:icon="@drawable/settings"
+        android:icon="@drawable/baseline_settings_24_bej"
         android:title="Settings" />
     <item
-        android:id="@+id/idUserInfo"
-        android:icon="@drawable/person"
-        android:title="User" />
+        android:id="@+id/idSearch"
+        android:icon="@drawable/baseline_search_24_bej"
+        android:title="Search" />
+    <item
+        android:id="@+id/idProfile"
+        android:icon="@drawable/baseline_person_24"
+        android:title="Profile" />
+
 </menu>

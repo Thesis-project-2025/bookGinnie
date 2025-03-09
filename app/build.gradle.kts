@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.example.bookgenie"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.bookgenie"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -62,6 +62,8 @@ dependencies {
 
     // Glide
     implementation ("com.github.bumptech.glide:glide:4.15.1")
+    implementation(libs.androidx.palette.ktx)
+    implementation(libs.androidx.recyclerview)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 
     // Test bağımlılıkları
