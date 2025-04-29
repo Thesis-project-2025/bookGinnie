@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,7 +70,13 @@ class MainPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainPageBinding.inflate(inflater, container, false)
+
+        binding.fab.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.mainToFairy)
+        }
+
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -209,7 +217,7 @@ class MainPageFragment : Fragment() {
     }
 
     private fun setupBottomNavigation() {
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.idMainPage -> {

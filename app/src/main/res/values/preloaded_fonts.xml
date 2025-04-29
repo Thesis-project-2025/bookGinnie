@@ -4,9 +4,13 @@
         <item>@font/</item>
         <item>@font/battambang</item>
         <item>@font/expletus_sans_semibold</item>
+        <item>@font/fredoka_medium</item>
         <item>@font/libre_baskerville</item>
         <item>@font/libre_baskerville_bold</item>
         <item>@font/noto_sans</item>
         <item>@font/nunito_bold</item>
+        <item>@font/nunito_medium</item>
+        <item>@font/poppins</item>
+        <item>@font/poppins_italic</item>
     </array>
 </resources>

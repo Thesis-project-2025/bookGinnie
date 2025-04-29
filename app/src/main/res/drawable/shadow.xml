@@ -3,7 +3,7 @@
     <!-- Shadow layer with a subtle offset -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/wine" />  <!-- A semi-transparent black shadow color -->
+            <solid android:color="@color/mainBlue" />  <!-- A semi-transparent black shadow color -->
             <corners android:radius="3dp" />  <!-- Soft corners for the shadow -->
             <padding
                 android:left="50dp"

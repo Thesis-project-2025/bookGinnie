@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1034779602265",
-    "project_id": "bookgenie-a4332",
-    "storage_bucket": "bookgenie-a4332.firebasestorage.app"
+    "project_number": "1005949569034",
+    "project_id": "bookgenie-c8475",
+    "storage_bucket": "bookgenie-c8475.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1034779602265:android:c6713d19c15cd7884fb048",
+        "mobilesdk_app_id": "1:1005949569034:android:21106a1924d6c1d46d77f3",
         "android_client_info": {
           "package_name": "com.example.bookgenie"
         }
@@ -15,26 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCxR3kCiArjWq7iV3u0kQWGlxIRjE-zOgw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1034779602265:android:3deaae23a48fe5c24fb048",
-        "android_client_info": {
-          "package_name": "com.example.bookgenir"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCxR3kCiArjWq7iV3u0kQWGlxIRjE-zOgw"
+          "current_key": "AIzaSyBXrIN4CmbGNkxWNd_UKW5tYUU3PRU-rmI"
         }
       ],
       "services": {

@@ -17,9 +17,9 @@ class GenreAdapter(
 
     // Generate a list of pastel colors for genre cards
     private val colorList = listOf(
-        R.color.wine,
-        R.color.lightwine,
-        R.color.darkwine
+        R.color.secondBlue,
+        R.color.blue3,
+        R.color.mainBlue
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {

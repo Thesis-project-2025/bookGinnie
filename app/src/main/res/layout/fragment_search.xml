@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkdarkdarkwine"
+    android:background="@color/background"
     tools:context=".SearchFragment">
 
     <!-- Toolbar with SearchView -->
@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/darkdarkwine"
+        android:background="@color/secondBlue"
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,8 +37,8 @@
             android:background="@drawable/rounded_corner"
             android:elevation="2dp"
             android:queryHint="Search for your favorite book"
-            android:textColor="@color/beige"
-            android:textColorHint="@color/beige"
+            android:textColor="@color/lightBeige"
+            android:textColorHint="@color/lightBeige"
             app:searchIcon="@drawable/baseline_search_24" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -65,7 +65,7 @@
         android:layout_marginEnd="16dp"
         android:text="Explore by Genre"
         android:textAlignment="center"
-        android:textColor="@color/darkBeige"
+        android:textColor="@color/mainBlue"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -109,9 +109,9 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/darkdarkwine"
-        app:itemIconTint="@color/beige"
-        app:itemTextColor="@color/beige"
+        android:background="@color/secondBlue"
+        app:itemIconTint="@color/mainBlue"
+        app:itemTextColor="@color/mainBlue"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

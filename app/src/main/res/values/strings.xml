@@ -10,5 +10,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="pages_text">No of Pages : %1$d</string>
+    <string name="year_text">Year : %1$d</string>
+    <string name="rating_text">Average Rating : %1$.1f</string>
+    <string name="genres_text">Genres : %1$s</string>
+
+    <string name="masal1">Choose what</string>
+    <string name="masal2">to do today?</string>
 
 </resources>

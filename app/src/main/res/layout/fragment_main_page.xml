@@ -5,7 +5,7 @@
     android:id="@+id/idMainPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkdarkdarkwine"
+    android:background="@color/background"
     tools:context=".MainPageFragment">
 
     <ProgressBar
@@ -31,7 +31,7 @@
             android:id="@+id/toolbarMainPage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/darkdarkwine"
+            android:background="@color/secondBlue"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme">
 
@@ -57,8 +57,8 @@
                 android:background="@drawable/rounded_corner"
                 android:elevation="2dp"
                 android:queryHint="Search for your favorite book"
-                android:textColor="@color/beige"
-                android:textColorHint="@color/beige"
+                android:textColor="@color/lightBeige"
+                android:textColorHint="@color/lightBeige"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout">
@@ -94,7 +94,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Top Rated Books"
-                android:textColor="@color/darkBeige"
+                android:textColor="@color/mainBlue"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -113,7 +113,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Best Action Books"
-                android:textColor="@color/darkBeige"
+                android:textColor="@color/mainBlue"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -132,7 +132,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Best Fiction Books"
-                android:textColor="@color/darkBeige"
+                android:textColor="@color/mainBlue"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -151,7 +151,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Best Children's Books"
-                android:textColor="@color/darkBeige"
+                android:textColor="@color/mainBlue"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -174,22 +174,45 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout" />
 
+    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="0dp"
+        android:id="@+id/bottomNavView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/darkdarkwine"
-        app:itemIconTint="@color/beige"
-        app:itemTextColor="@color/beige"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bottom_nav_background"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
         app:labelVisibilityMode="unlabeled"
+        app:itemIconSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_design" />
+
+    <!-- Ortadaki yuvarlak mavi artı butonu (opsiyonel) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/mainBlue"
+        android:src="@drawable/masal"
+        android:visibility="visible"
+        android:layout_marginBottom="100dp"
+        app:fabSize="mini"
+        app:maxImageSize="40dp"
+        app:layout_constraintBottom_toBottomOf="@id/bottomNavView"
+        app:layout_constraintEnd_toEndOf="@id/bottomNavView"
+        app:layout_constraintStart_toStartOf="@id/bottomNavView"
+        app:layout_constraintTop_toTopOf="@id/bottomNavView"
+        app:layout_constraintVertical_bias="0.0"
+        app:tint="@null" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

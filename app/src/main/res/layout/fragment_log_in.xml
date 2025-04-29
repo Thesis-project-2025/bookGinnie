@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:lottie="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkdarkwine"
+    android:background="@color/background"
     tools:context=".presentation.login.MainActivity">
 
+    <!-- BLOB Arka Plan Görseli -->
+    <ImageView
+        android:id="@+id/blobShape"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Lottie Animation -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loginanimation" />
+
+
+    <!-- E-posta Alanı -->
     <EditText
         android:id="@+id/emailLogIn"
         android:layout_width="0dp"
@@ -16,18 +43,20 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
+        android:fontFamily="@font/nunito_bold"
         android:ems="10"
         android:hint="E-mail"
         android:inputType="textEmailAddress"
         android:padding="11dp"
         android:textAlignment="viewStart"
-        android:textColor="@color/beige"
-        android:textColorHint="@color/beige"
+        android:textColor="@color/lightBeige"
+        android:textColorHint="@color/lightBeige"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
+    <!-- Şifre Alanı -->
     <EditText
         android:id="@+id/passwordLogIn"
         android:layout_width="0dp"
@@ -36,29 +65,31 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
+        android:fontFamily="@font/nunito_bold"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
         android:padding="11dp"
-        android:textColor="@color/beige"
-        android:textColorHint="@color/beige"
+        android:textColor="@color/lightBeige"
+        android:textColorHint="@color/lightBeige"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/emailLogIn" />
 
+    <!-- Hoşgeldiniz Başlığı -->
     <TextView
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="300dp"
         android:layout_marginEnd="64dp"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/logInWelcomeBackText"
         android:textAlignment="center"
-        android:textColor="@color/beige"
+        android:textColor="@color/lightBeige"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,6 +97,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Alt Başlık -->
     <TextView
         android:id="@+id/textView4"
         android:layout_width="0dp"
@@ -76,43 +108,32 @@
         android:fontFamily="@font/nunito_bold"
         android:text="@string/logInText"
         android:textAlignment="center"
-        android:textColor="@color/beige"
+        android:textColor="@color/lightBeige"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
+    <!-- Giriş Yap Butonu -->
     <Button
         android:id="@+id/logInButton"
         android:layout_width="0dp"
         android:layout_height="54dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="64dp"
-        android:backgroundTint="@color/darkwine"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:backgroundTint="@color/mainBlue"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/logInButtonText"
-        android:textColor="@color/beige"
+        android:textColor="@color/lightBeige"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordLogIn"
-        app:strokeColor="@color/beige"
+        app:strokeColor="@color/mainBlue"
         app:strokeWidth="1dp" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="48dp"
-        android:src="@drawable/logotransparent_white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

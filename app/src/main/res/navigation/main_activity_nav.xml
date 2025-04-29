@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_activity_nav"
-    app:startDestination="@id/onboardingFragment">
+    app:startDestination="@id/mainPageFragment">
 
     <fragment
         android:id="@+id/logInFragment"
@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_mainPageFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/mainToFairy"
+            app:destination="@id/fairyTaleFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookDetailsFragment"
@@ -75,17 +78,28 @@
         <action
             android:id="@+id/action_bookDetailsFragment_to_searchFragment2"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/detailsToFairy"
+            app:destination="@id/fairyTaleFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.bookgenie.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/settingsToFairy"
+            app:destination="@id/fairyTaleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
         android:name="com.example.bookgenie.UserInfoFragment"
         android:label="fragment_user_info"
-        tools:layout="@layout/fragment_user_info" />
+        tools:layout="@layout/fragment_user_info" >
+        <action
+            android:id="@+id/userinfoToFairy"
+            app:destination="@id/fairyTaleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.bookgenie.SearchFragment"
@@ -103,5 +117,30 @@
         <action
             android:id="@+id/action_searchFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/searchToFairy"
+            app:destination="@id/fairyTaleFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fairyTaleFragment"
+        android:name="com.example.bookgenie.FairyTaleFragment"
+        android:label="fragment_fairy_tale"
+        tools:layout="@layout/fragment_fairy_tale" >
+        <action
+            android:id="@+id/fairyToGeneration"
+            app:destination="@id/generationFragment" />
+        <action
+            android:id="@+id/fairyToSpeech"
+            app:destination="@id/speechFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generationFragment"
+        android:name="com.example.bookgenie.GenerationFragment"
+        android:label="fragment_generation"
+        tools:layout="@layout/fragment_generation" />
+    <fragment
+        android:id="@+id/speechFragment"
+        android:name="com.example.bookgenie.SpeechFragment"
+        android:label="fragment_speech"
+        tools:layout="@layout/fragment_speech" />
 </navigation>

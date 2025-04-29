@@ -37,6 +37,9 @@ class BookDetailsFragment : Fragment() {
 
         binding.toolbarBookDetails.title = book.title
 
+        // Başlık için stil uyguluyoruz
+        binding.toolbarBookDetails.setTitleTextAppearance(context, R.style.MyToolbarTitleTextStyle)
+
         // Glide ile resmi yükleyip arka planı oluştur
         Glide.with(requireContext())
             .asBitmap()
@@ -57,10 +60,13 @@ class BookDetailsFragment : Fragment() {
         binding.tvBook.text = book.title
         binding.tvAuthor.text = book.author_name
         binding.tvDescription.text = book.description
-        binding.tvPages.text = book.num_pages.toString()
-        binding.tvYear.text = book.publication_year.toString()
-        binding.tvRating.text = book.average_rating.toString()
-        binding.tvGenres.text = book.genres.joinToString(", ")
+
+        binding.tvPages.text = getString(R.string.pages_text, book.num_pages)
+        binding.tvYear.text = getString(R.string.year_text, book.publication_year)
+        binding.tvRating.text = getString(R.string.rating_text, book.average_rating)
+        binding.tvGenres.text = getString(R.string.genres_text, book.genres.joinToString(", "))
+
+
 
         // Rating işlemleri
         loadRatingFromFirestore(book.book_id) // Kitap için rating verisini al

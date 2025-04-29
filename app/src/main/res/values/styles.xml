@@ -1,0 +1,8 @@
+<resources>
+    <style name="MyToolbarTitleTextStyle">
+        <!-- Burada fontu, yazı boyutunu ve diğer özellikleri belirtebilirsiniz -->
+        <item name="android:fontFamily">@font/nunito_bold</item>
+        <item name="android:textColor">@color/mainBlue</item> <!-- Başlık metninin rengi -->
+        <item name="android:textSize">20sp</item> <!-- Başlık yazı boyutu -->
+    </style>
+</resources>
