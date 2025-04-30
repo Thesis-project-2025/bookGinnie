@@ -2,7 +2,13 @@
     <style name="MyToolbarTitleTextStyle">
         <!-- Burada fontu, yazı boyutunu ve diğer özellikleri belirtebilirsiniz -->
         <item name="android:fontFamily">@font/nunito_bold</item>
-        <item name="android:textColor">@color/mainBlue</item> <!-- Başlık metninin rengi -->
+        <item name="android:textColor">@color/beyazimsi</item> <!-- Başlık metninin rengi -->
         <item name="android:textSize">20sp</item> <!-- Başlık yazı boyutu -->
     </style>
+
+    <style name="FABCircleOverlay" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

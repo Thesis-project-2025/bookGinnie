@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/softPurple"
+    android:background="@color/dahasiyah"
     tools:context=".FairyTaleFragment">
 
     <!-- Lottie Animation -->
@@ -31,7 +31,7 @@
         android:layout_marginBottom="12dp"
         android:fontFamily="@font/fredoka_medium"
         android:text="@string/masal1"
-        android:textColor="@color/sari"
+        android:textColor="@color/beyazimsi"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/masal2"
@@ -48,7 +48,7 @@
         android:layout_marginEnd="250dp"
         android:fontFamily="@font/fredoka_medium"
         android:text="@string/masal2"
-        android:textColor="@color/sari"
+        android:textColor="@color/beyazimsi"
         android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,6 +74,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardCornerRadius="16dp"
+            android:background="@color/beyazimsi"
             app:cardElevation="8dp">
 
             <LinearLayout
@@ -110,6 +111,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardCornerRadius="16dp"
+            android:background="@color/beyazimsi"
             app:cardElevation="8dp">
 
             <LinearLayout

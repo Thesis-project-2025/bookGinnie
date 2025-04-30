@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -74,6 +75,10 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
+
+        binding.fab.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.searchToFairy)
+        }
         return binding.root
     }
 
@@ -91,7 +96,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupBottomNavigation() {
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
 
         // Set the current selected item
         bottomNavigationView.selectedItemId = R.id.idSearch

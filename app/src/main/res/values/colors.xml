@@ -16,10 +16,17 @@
     <color name="pembe">#FBCFE8</color>
     <color name="sari">#FDE68A</color>
     <color name="mavi">#BFDBFE</color>
-    <color name="yesil">#BBF7D0</color>
+    <color name="yesil">#2C6430</color>
     <color name="lavanta">#E9D5FF</color>
     <color name="turuncu">#de682e</color>
-    <color name="darkGreen">#6F826A</color>
+    <color name="darkGreen">#1A503E</color>
+
+    <color name="beyazimsi">#F1EFEC</color>
+    <color name="siyahimsi">#2B2B2B</color>
+    <color name="dahasiyah">#181C14</color>
+    <color name="yesilmsi">#1a472a</color>
+    <color name="kremimsi">#ECDFCC</color>
+
 
     <color name="selectedColor">#D5E5D5</color> <!-- Seçilen kartın rengi -->
     <color name="deselectedColor">#FFFFFFFF</color> <!-- Seçilmeyen kartın rengi -->

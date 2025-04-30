@@ -11,6 +11,9 @@
         android:icon="@drawable/baseline_settings_24_bej"
         android:title="Settings" />
     <item
+        android:id="@+id/idbos"
+        android:title="bos" />
+    <item
         android:id="@+id/idSearch"
         android:icon="@drawable/baseline_search_24_bej"
         android:title="Search" />

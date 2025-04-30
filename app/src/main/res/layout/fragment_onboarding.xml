@@ -22,8 +22,8 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@id/textView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,17 +31,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
-        app:lottie_rawRes="@raw/woman" />
+        app:lottie_rawRes="@raw/woman2" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="310dp"
         android:layout_height="99dp"
-        android:layout_marginTop="37dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/poppins_italic"
         android:text="@string/welcomeText"
         android:textAlignment="center"
-        android:textColor="@color/blue3"
+        android:textColor="@color/beyazimsi"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,17 +55,17 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="28dp"
         android:layout_marginEnd="80dp"
-        android:backgroundTint="@color/mainBlue"
+        android:backgroundTint="@color/dahasiyah"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/signUpButtonText"
-        android:textColor="@color/lightBeige"
+        android:textColor="@color/beyazimsi"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:strokeColor="@color/mainBlue"
+        app:strokeColor="@color/beyazimsi"
         app:strokeWidth="1dp" />
 
     <Button
@@ -75,17 +75,17 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="80dp"
-        android:backgroundTint="@color/mainBlue"
+        android:backgroundTint="@color/dahasiyah"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/logInButtonText"
-        android:textColor="@color/lightBeige"
+        android:textColor="@color/beyazimsi"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUpButtonId1"
-        app:strokeColor="@color/mainBlue"
+        app:strokeColor="@color/beyazimsi"
         app:strokeWidth="1sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
