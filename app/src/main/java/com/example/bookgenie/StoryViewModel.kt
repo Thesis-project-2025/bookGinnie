@@ -25,44 +25,53 @@ class StoryViewModel : ViewModel() {
     private val apiService = RetrofitInstance.instance
 
     fun generateStory(idea: String, maxTokens: Int = 250, temp: Float = 0.8f, topP: Float = 0.95f) {
-        _isLoading.value = true // Yükleniyor durumunu başlat
-        _error.value = null     // Önceki hatayı temizle
-        _storyResult.value = null // Önceki sonucu temizle
+        _isLoading.value = true
+        _error.value = null
+        _storyResult.value = null
 
-        // Coroutine başlat (ViewModelScope otomatik olarak ViewModel yok olduğunda iptal eder)
+        val systemInstruction = """
+        You are a creative storytelling assistant. Write a complete, self-contained fairytale 
+    based on the following idea. Make sure the story has a clear beginning, middle, and end. 
+    Finish the story explicitly with the phrase: "The end."
+        
+    """.trimIndent()
+
+        // Kullanıcının prompt'una "Tell a fairytale" ekle (başta yoksa)
+        val userPrompt = if (idea.lowercase().startsWith("tell a fairytale")) {
+            idea
+        } else {
+            "Tell a fairytale about: $idea"
+        }
+
+        // API'ye gönderilecek birleşik prompt
+        val finalPrompt = systemInstruction + userPrompt
+
         viewModelScope.launch {
             try {
-                // Network isteğini IO dispatcher üzerinde yap (arka plan thread)
                 val response = withContext(Dispatchers.IO) {
                     val requestBody = StoryApiRequest(
-                        idea = idea,
+                        idea = finalPrompt,
                         max_new_tokens = maxTokens,
                         temperature = temp,
                         top_p = topP
                     )
-                    // API çağrısını yap
                     apiService.generateStory(requestBody)
                 }
 
-                // Cevabı kontrol et
                 if (response.isSuccessful) {
                     val storyResponse = response.body()
-                    // Cevap gövdesi ve içindeki story null değilse LiveData'yı güncelle
-                    _storyResult.postValue(storyResponse?.story) // Arka plandan LiveData güncellemek için postValue
+                    _storyResult.postValue(storyResponse?.story)
                 } else {
-                    // HTTP hata kodu alındıysa
                     val errorBody = response.errorBody()?.string() ?: "Unknown error"
-                    _error.postValue("API Hatası: ${response.code()} - ${errorBody}")
+                    _error.postValue("API Hatası: ${response.code()} - $errorBody")
                 }
-
             } catch (e: Exception) {
-                // Network hatası veya başka bir exception oluştuysa
                 _error.postValue("Bağlantı Hatası: ${e.message}")
-                e.printStackTrace() // Logcat'te hatayı görmek için
+                e.printStackTrace()
             } finally {
-                // İşlem bitince yükleniyor durumunu kapat
                 _isLoading.postValue(false)
             }
         }
     }
+
 }

@@ -199,6 +199,12 @@ class SpeechFragment : Fragment() {
         return String.format("%d:%02d", minutes, seconds)
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadStories()
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         mediaPlayer?.release()
