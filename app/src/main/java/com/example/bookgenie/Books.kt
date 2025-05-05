@@ -22,6 +22,7 @@ data class Books(
                  val publication_year:Int,
                  val publisher:String,
                  val title:String,
+                 val rating_count:Int
 ) : Serializable{
 
 

@@ -35,7 +35,6 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme">
 
-            <!-- Logo (Solda) -->
             <ImageView
                 android:id="@+id/bookGenieLogo"
                 android:layout_width="35dp"
@@ -47,7 +46,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Ortalanmış SearchView -->
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchMainpage"
                 android:layout_width="match_parent"
@@ -66,10 +64,8 @@
                 app:searchIcon="@drawable/baseline_search_24" />
 
         </androidx.appcompat.widget.Toolbar>
-
     </FrameLayout>
 
-    <!-- Content container -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollViewCategories"
         android:layout_width="match_parent"
@@ -86,9 +82,8 @@
             android:orientation="vertical"
             android:padding="8dp">
 
-            <!-- Top Rated Books Section -->
             <TextView
-                android:id="@+id/tvTopRatedBooks"
+                android:id="@+id/tvTopRatedByCountBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -99,73 +94,161 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTopRatedBooks"
+                android:id="@+id/rvTopRatedByCountBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal" />
 
-            <!-- Best Action Books Section -->
             <TextView
-                android:id="@+id/tvActionBooks"
+                android:id="@+id/tvHighRatedFictionBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="Best Action Books"
+                android:text="High-Rated Fiction Books"
                 android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvActionBooks"
+                android:id="@+id/rvHighRatedFictionBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal" />
 
-            <!-- Best Fiction Books Section -->
             <TextView
-                android:id="@+id/tvFictionBooks"
+                android:id="@+id/tvHighRatedNonFictionBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="Best Fiction Books"
+                android:text="High-Rated Nonfiction Books"
                 android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvFictionBooks"
+                android:id="@+id/rvHighRatedNonFictionBooks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal" />
 
-            <!-- Best Children's Books Section -->
             <TextView
-                android:id="@+id/tvChildrenBooks"
+                android:id="@+id/tvForYou"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="Best Children's Books"
+                android:text="Sizin İçin Önerilenler"
                 android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvChildrenBooks"
+                android:id="@+id/rvForYou"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvSimilarTo1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Similar to..." android:textColor="@color/beyazimsi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" /> <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSimilarTo1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone" /> <TextView
+            android:id="@+id/tvSimilarTo2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="Similar to..." android:textColor="@color/beyazimsi"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone" /> <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSimilarTo2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone" /> <TextView
+            android:id="@+id/tvRandomGenre1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="Genre 1"
+            android:textColor="@color/beyazimsi"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRandomGenre1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tvRandomGenre2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Genre 2"
+                android:textColor="@color/beyazimsi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRandomGenre2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tvRandomGenre3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Genre 3"
+                android:textColor="@color/beyazimsi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRandomGenre3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Search results container -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookRV"
         android:layout_width="0dp"
@@ -211,8 +294,4 @@
         app:layout_constraintBottom_toBottomOf="@+id/bottomNavView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

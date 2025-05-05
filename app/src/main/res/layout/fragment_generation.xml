@@ -83,6 +83,18 @@ The young fox and his bride live happily ever after."
                     android:textSize="18sp" />
         </ScrollView>
 
+        <ProgressBar
+            android:id="@+id/loadingProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/scrollViewMasal"
+            app:layout_constraintEnd_toEndOf="@+id/scrollViewMasal"
+            app:layout_constraintStart_toStartOf="@+id/scrollViewMasal"
+            app:layout_constraintTop_toTopOf="@+id/scrollViewMasal" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/saveContainer"
             android:layout_width="0dp"

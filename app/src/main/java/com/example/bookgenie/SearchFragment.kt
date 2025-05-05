@@ -432,6 +432,7 @@ class SearchFragment : Fragment() {
         val publication_year = convertStringOrIntToInt(document.get("publication_year"))
         val publisher = handleStringOrNaN(document.get("publisher"))
         val title = handleStringOrNaN(document.get("title"))
+        val rating_count = convertStringOrIntToInt(document.get("rating_count")) // Rating count'u al
 
         return Books(
             authors,
@@ -452,7 +453,8 @@ class SearchFragment : Fragment() {
             publication_month,
             publication_year,
             publisher,
-            title
+            title,
+            rating_count
         )
     }
 }
