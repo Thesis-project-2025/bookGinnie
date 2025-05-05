@@ -12,8 +12,6 @@ constraintlayout = "2.1.4"
 navigationFragmentKtx = "2.8.3"
 navigationUiKtx = "2.8.3"
 googleGmsGoogleServices = "4.4.2"
-firebaseAuth = "23.1.0"
-firebaseFirestoreKtx = "24.5.0" # Firestore versiyonu
 glide = "4.15.1"
 paletteKtx = "1.0.0"
 recyclerview = "1.4.0"
@@ -29,8 +27,6 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "paletteKtx" }

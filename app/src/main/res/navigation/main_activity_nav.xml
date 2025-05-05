@@ -140,7 +140,11 @@
         android:id="@+id/generationFragment"
         android:name="com.example.bookgenie.GenerationFragment"
         android:label="fragment_generation"
-        tools:layout="@layout/fragment_generation" />
+        tools:layout="@layout/fragment_generation" >
+        <action
+            android:id="@+id/generationToSpeech"
+            app:destination="@id/speechFragment" />
+    </fragment>
     <fragment
         android:id="@+id/speechFragment"
         android:name="com.example.bookgenie.SpeechFragment"

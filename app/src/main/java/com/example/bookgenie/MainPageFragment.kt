@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -71,9 +72,17 @@ class MainPageFragment : Fragment() {
     ): View {
         binding = FragmentMainPageBinding.inflate(inflater, container, false)
 
-        binding.fab.setOnClickListener {
+        binding.fabButton.setOnClickListener {
             Navigation.findNavController(it).navigate(R.id.mainToFairy)
         }
+
+        // Bounce animasyonunu başlat
+        val bounceAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce)
+        binding.fabButton.startAnimation(bounceAnimation)
+
+        // Pulse animasyonunu başlat
+        val pulseAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.pulse)
+        binding.fabButton.startAnimation(pulseAnimation)
 
         return binding.root
 

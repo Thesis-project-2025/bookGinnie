@@ -198,21 +198,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_design" />
 
-    <!-- Ortadaki yuvarlak mavi artı butonu -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/yesilmsi"
+    <ImageButton
+        android:id="@+id/fabButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="50dp"
+        android:background="@null"
+        android:scaleType="centerInside"
+        android:elevation="8dp"
         android:src="@drawable/masal"
-        android:visibility="visible"
-        android:layout_marginBottom="60dp"
-        app:fabSize="mini"
-        app:maxImageSize="50dp"
-        app:layout_constraintBottom_toBottomOf="@id/bottomNavView"
-        app:layout_constraintEnd_toEndOf="@id/bottomNavView"
-        app:layout_constraintStart_toStartOf="@id/bottomNavView"
-        app:layout_constraintVertical_bias="0.0"
-        app:tint="@null" />
+        app:tint="@null"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomNavView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

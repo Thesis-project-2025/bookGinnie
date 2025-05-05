@@ -74,7 +74,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardCornerRadius="16dp"
-            android:background="@color/beyazimsi"
+            app:cardBackgroundColor="@color/beyazimsi"
             app:cardElevation="8dp">
 
             <LinearLayout
@@ -111,7 +111,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardCornerRadius="16dp"
-            android:background="@color/beyazimsi"
+            app:cardBackgroundColor="@color/beyazimsi"
             app:cardElevation="8dp">
 
             <LinearLayout

@@ -4,57 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mavi"
-    tools:context=".SpeechFragment" >
+    android:background="@color/dahasiyah"
+    tools:context=".SpeechFragment">
 
-    <ImageView
-        android:id="@+id/blobShape"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/sea2"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppins_italic"
+        android:padding="16dp"
+        android:text="Saved Fairytales"
+        android:textColor="@color/beyazimsi"
+        android:textSize="30sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/imageView14"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintBottom_toTopOf="@id/seekBarLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView14"
-        android:layout_width="77dp"
-        android:layout_height="53dp"
-        android:layout_marginTop="620dp"
-        android:layout_marginEnd="116dp"
-        android:src="@drawable/fish"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
+    <!-- SeekBar ve zamanları içeren alt layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/seekBarLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="620dp"
-        android:backgroundTint="@color/yesilmsi"
-        android:drawableLeft="@drawable/play_button"
-        android:fontFamily="@font/poppins_italic"
-        android:padding="8dp"
-        android:text="PLAY"
-        android:textColor="@color/beyazimsi"
-        android:textStyle="bold"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@id/audioControlPanel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/blobShape" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintEnd_toEndOf="parent">
 
+        <TextView
+            android:id="@+id/textCurrentTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"
+            android:textColor="@color/beyazimsi"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/beyazimsi"
+            android:thumbTint="@color/beyazimsi"
+            app:layout_constraintStart_toEndOf="@id/textCurrentTime"
+            app:layout_constraintEnd_toStartOf="@id/textTotalTime"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/textTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"
+            android:textColor="@color/beyazimsi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/audioControlPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:background="@color/dahasiyah"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnRewind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:contentDescription="Rewind"
+            android:src="@drawable/ic_rewind_foreground"
+            app:tint="@color/beyazimsi" />
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:contentDescription="Play/Pause"
+            android:src="@drawable/play_button_foreground"
+            app:tint="@color/beyazimsi" />
+
+        <ImageButton
+            android:id="@+id/btnForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:contentDescription="Forward"
+            android:src="@drawable/ic_forward_foreground"
+            app:tint="@color/beyazimsi" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
