@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/Shadowed_Earth_1"
     tools:context=".SearchFragment">
 
     <!-- Toolbar with SearchView -->
@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dahasiyah"
+        android:background="@color/Shadowed_Earth_2"
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -104,42 +104,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavView"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_marginBottom="0dp"
-        app:itemIconTint="@color/bottom_nav_item_color"
-        app:itemTextColor="@color/bottom_nav_item_color"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconPadding="2dp"
-        android:background="@color/dahasiyah"
-        app:itemPaddingTop="@dimen/cardview_default_elevation"
-        app:itemIconSize="22dp"
-        app:itemHorizontalTranslationEnabled="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_design" />
-
-    <!-- Ortadaki yuvarlak mavi artı butonu -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/yesilmsi"
-        android:src="@drawable/masal"
-        android:visibility="visible"
-        android:layout_marginBottom="60dp"
-        app:fabSize="mini"
-        app:maxImageSize="50dp"
-        app:layout_constraintBottom_toBottomOf="@id/bottomNavView"
-        app:layout_constraintEnd_toEndOf="@id/bottomNavView"
-        app:layout_constraintStart_toStartOf="@id/bottomNavView"
-        app:layout_constraintVertical_bias="0.0"
-        app:tint="@null" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

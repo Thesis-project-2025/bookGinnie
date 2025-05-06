@@ -75,10 +75,6 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
-
-        binding.fab.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.searchToFairy)
-        }
         return binding.root
     }
 
