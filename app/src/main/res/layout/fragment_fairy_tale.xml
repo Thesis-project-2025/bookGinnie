@@ -88,7 +88,7 @@
                     android:id="@+id/iconCard1"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/storyland" />
+                    android:src="@drawable/genie" />
 
                 <TextView
                     android:id="@+id/textCard1"
@@ -125,7 +125,7 @@
                     android:id="@+id/iconCard2"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/speech" />
+                    android:src="@drawable/kazan" />
 
                 <TextView
                     android:id="@+id/textCard2"
@@ -156,4 +156,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardContainer" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
