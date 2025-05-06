@@ -36,9 +36,6 @@ class LogInFragment : Fragment() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        // Giriş başarılıysa ana ekrana yönlendirme
-                        Snackbar.make(binding.emailLogIn, "Successfully logged in!", Snackbar.LENGTH_SHORT)
-                            .show()
                         Navigation.findNavController(binding.root)
                             .navigate(R.id.loginToMainPage)  // homeFragment'i kendi ana ekranınızla değiştirin
                     } else {

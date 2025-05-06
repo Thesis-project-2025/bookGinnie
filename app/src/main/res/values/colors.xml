@@ -32,6 +32,20 @@
     <color name="selectedColor">#D5E5D5</color> <!-- Seçilen kartın rengi -->
     <color name="deselectedColor">#FFFFFFFF</color> <!-- Seçilmeyen kartın rengi -->
 
+    <color name="Midnight_Shadows_1">#0F0F1B</color>
+    <color name="Midnight_Shadows_2">#16213E</color>
+    <color name="Midnight_Shadows_3">#0F3460</color>
+    <color name="Midnight_Shadows_4">#E94560</color>
+    <color name="Midnight_Shadows_5">#F9F9F9</color>
+
+    <color name="Shadowed_Earth_1">#1F1D1D</color>
+    <color name="Shadowed_Earth_2">#311B38</color>
+    <color name="Shadowed_Earth_3">#4A2A52</color>
+    <color name="Shadowed_Earth_4">#6F6073</color>
+    <color name="Shadowed_Earth_5">#F9F9F9</color>
+    <color name="Shadowed_Earth_6">#6A1E55</color>
+
+
 
 
 </resources>

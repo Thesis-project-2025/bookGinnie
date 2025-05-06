@@ -77,26 +77,6 @@ class BookDetailsFragment : Fragment() {
             }
         }
 
-        // Bottom Navigation işlemleri
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavigationView2
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.idMainPage -> {
-                    findNavController().navigate(R.id.bookDetailsToMainPage)
-                    true
-                }
-                R.id.idSettings -> {
-                    findNavController().navigate(R.id.bookDetailsToSettings)
-                    true
-                }
-                R.id.idSearch -> {
-                    findNavController().navigate(R.id.action_bookDetailsFragment_to_searchFragment2)
-                    true
-                }
-                else -> false
-            }
-        }
-
         return binding.root
     }
 

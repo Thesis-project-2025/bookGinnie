@@ -6,32 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".SignUpFragment">
 
-    <!-- BLOB arka plan görseli -->
-    <ImageView
-        android:id="@+id/blobShape"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/signup_blob_bg"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Lottie Animation -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="40dp"
+
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@id/textView10"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/kapi" />
+        app:lottie_rawRes="@raw/kapi2" />
 
     <!-- Başlık -->
 
@@ -39,7 +29,7 @@
         android:id="@+id/textView10"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="210dp"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/signUpCreateText"
         android:textAlignment="center"

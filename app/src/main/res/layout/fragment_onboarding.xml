@@ -4,21 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/onboarding_background"
     tools:context=".OnboardingFragment">
 
     <!-- BLOB arka plan görseli -->
 
-    <ImageView
-        android:id="@+id/blobShape"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/onboarding"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -31,17 +20,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
-        app:lottie_rawRes="@raw/woman2" />
+        app:lottie_rawRes="@raw/woman4" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="310dp"
         android:layout_height="99dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_italic"
         android:text="@string/welcomeText"
         android:textAlignment="center"
-        android:textColor="@color/beyazimsi"
+        android:textColor="@color/Shadowed_Earth_5"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,41 +40,41 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/signUpButtonId1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="80dp"
-        android:backgroundTint="@color/dahasiyah"
+        android:layout_height="54dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="68dp"
+        android:backgroundTint="@color/Shadowed_Earth_1"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/signUpButtonText"
-        android:textColor="@color/beyazimsi"
+        android:textColor="@color/Shadowed_Earth_5"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:strokeColor="@color/beyazimsi"
+        app:strokeColor="@color/Shadowed_Earth_5"
         app:strokeWidth="1dp" />
 
     <Button
         android:id="@+id/logInButtonId1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="80dp"
-        android:backgroundTint="@color/dahasiyah"
+        android:layout_height="54dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="68dp"
+        android:backgroundTint="@color/Shadowed_Earth_1"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/logInButtonText"
-        android:textColor="@color/beyazimsi"
+        android:textColor="@color/Shadowed_Earth_5"
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUpButtonId1"
-        app:strokeColor="@color/beyazimsi"
-        app:strokeWidth="1sp" />
+        app:strokeColor="@color/Shadowed_Earth_5"
+        app:strokeWidth="1dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

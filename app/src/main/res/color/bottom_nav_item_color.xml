@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/yesilmsi" android:state_checked="true" />
-    <item android:color="@color/beyazimsi" />  <!-- Seçili olmayan durumda yarı şeffaf beyaz -->
+    <item android:color="@color/Shadowed_Earth_5" android:state_checked="true" />
+    <item android:color="@color/Shadowed_Earth_1" />  <!-- Seçili olmayan durumda yarı şeffaf beyaz -->
 </selector>

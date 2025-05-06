@@ -160,17 +160,6 @@ class MainPageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMainPageBinding.inflate(inflater, container, false)
 
-        binding.fabButton.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.mainToFairy)
-        }
-
-        // Bounce animasyonunu başlat
-        val bounceAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce)
-        binding.fabButton.startAnimation(bounceAnimation)
-
-        // Pulse animasyonunu başlat
-        val pulseAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.pulse)
-        binding.fabButton.startAnimation(pulseAnimation)
         return binding.root
     }
 
@@ -180,7 +169,6 @@ class MainPageFragment : Fragment() {
         setupSearchView()
         setupBackPressHandler()
         setupRecyclerViews()
-        setupBottomNavigation()
 
         // Initial Data Loading
         loadTopRatedByCountBooks()
@@ -396,63 +384,6 @@ class MainPageFragment : Fragment() {
         })
     }
 
-
-    private fun setupBottomNavigation() {
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
-        // Aynı item'a tekrar tıklanmasını engelle
-        bottomNavigationView.setOnNavigationItemReselectedListener { /* Do nothing */ }
-
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
-            // Mevcut fragment'ın ID'sini al
-            val currentDestinationId = findNavController().currentDestination?.id
-
-            // Kendi Navigasyon ID'lerini ve Action ID'lerini buraya gir:
-            val mainPageId = R.id.mainPageFragment // Ana sayfa fragment ID'si
-            val settingsId = R.id.settingsFragment // Settings fragment ID'si (varsa)
-            val userInfoId = R.id.userInfoFragment // Profile fragment ID'si (varsa)
-            val searchPageId = R.id.searchFragment // Search fragment ID'si (varsa)
-
-            val mainToSettingsAction = R.id.mainPageToSettings // Ana sayfadan Settings'e geçiş Action ID'si
-            val mainToUserInfoAction = R.id.mainPageToUserInfo // Ana sayfadan Profile'a geçiş Action ID'si
-            val mainToSearchAction = R.id.action_mainPageFragment_to_searchFragment // Ana sayfadan Search'e geçiş Action ID'si
-
-
-            when (menuItem.itemId) {
-                R.id.idMainPage -> {
-                    // Ana sayfa ikonuna tıklandı
-                    if (isInSearchMode){
-                        switchToCategoriesMode() // Arama modundaysa kategoriye dön
-                    }
-                    true // Başka bir işlem yapma
-                }
-                R.id.idSettings -> {
-                    // Ayarlar ikonuna tıklandı
-                    if (currentDestinationId != settingsId) { // Zaten ayarlar sayfasında değilse
-                        try { findNavController().navigate(mainToSettingsAction) }
-                        catch (e: Exception) { Log.e("NavigationError", "Settings navigation failed: ${e.message}") }
-                    }
-                    true
-                }
-                R.id.idProfile -> {
-                    // Profil ikonuna tıklandı
-                    if (currentDestinationId != userInfoId) { // Zaten profil sayfasında değilse
-                        try { findNavController().navigate(mainToUserInfoAction) }
-                        catch (e: Exception) { Log.e("NavigationError", "Profile navigation failed: ${e.message}") }
-                    }
-                    true
-                }
-                R.id.idSearch -> {
-                    // Arama ikonuna tıklandı (Ayrı bir Arama Fragment'ına gidiyorsa)
-                    if (currentDestinationId != searchPageId) { // Zaten arama sayfasında değilse
-                        try { findNavController().navigate(mainToSearchAction) }
-                        catch (e: Exception) { Log.e("NavigationError", "Search navigation failed: ${e.message}") }
-                    }
-                    true
-                }
-                else -> false // Tanımsız item ID'si
-            }
-        }
-    }
 
     // --- Utility to Show/Hide Sections ---
     private fun showSection(textView: TextView, recyclerView: RecyclerView) {
@@ -1208,7 +1139,7 @@ class MainPageFragment : Fragment() {
             isInSearchMode = true
             binding.scrollViewCategories.visibility = View.GONE
             binding.bookRV.visibility = View.VISIBLE
-            binding.fabButton.visibility = View.GONE // FAB'ı gizle
+            //binding.fabButton.visibility = View.GONE // FAB'ı gizle
             Log.d("SearchMode", "Switched to search mode VIEW")
         }
     }
@@ -1221,7 +1152,7 @@ class MainPageFragment : Fragment() {
             binding.searchMainpage.clearFocus() // Klavyeyi gizle
             binding.scrollViewCategories.visibility = View.VISIBLE
             binding.bookRV.visibility = View.GONE
-            binding.fabButton.visibility = View.VISIBLE // FAB'ı göster
+            //binding.fabButton.visibility = View.VISIBLE // FAB'ı göster
             clearSearchResults() // Arama sonuçlarını temizle
             Log.d("SearchMode", "Switched to categories mode VIEW")
         }

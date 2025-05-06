@@ -3,22 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/idMainPage"
+        android:id="@+id/mainPageFragment"
         android:icon="@drawable/baseline_home_24_b"
         android:title="Home" />
     <item
-        android:id="@+id/idSettings"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/baseline_settings_24_bej"
         android:title="Settings" />
     <item
-        android:id="@+id/idbos"
-        android:title="bos" />
+        android:id="@+id/idFab"
+        android:title=""
+        android:enabled="false"/>
     <item
-        android:id="@+id/idSearch"
+        android:id="@+id/searchFragment"
         android:icon="@drawable/baseline_search_24_bej"
         android:title="Search" />
     <item
-        android:id="@+id/idProfile"
+        android:id="@+id/userInfoFragment"
         android:icon="@drawable/baseline_person_24"
         android:title="Profile" />
 

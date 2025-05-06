@@ -89,41 +89,11 @@ class SearchFragment : Fragment() {
         setupBackPressHandler()
         setupGenreRecyclerView()
         setupBookRecyclerView()
-        setupBottomNavigation()
 
         // Default to genre mode when first opening
         switchToGenreMode()
     }
 
-    private fun setupBottomNavigation() {
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
-
-        // Set the current selected item
-        bottomNavigationView.selectedItemId = R.id.idSearch
-
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.idMainPage -> {
-                    findNavController().navigate(R.id.action_searchFragment_to_mainPageFragment)
-                    true
-                }
-                R.id.idSettings -> {
-                    // Make sure these IDs match your navigation graph
-                    findNavController().navigate(R.id.action_searchFragment_to_settingsFragment)
-                    true
-                }
-                R.id.idProfile -> {
-                    findNavController().navigate(R.id.action_searchFragment_to_userInfoFragment)
-                    true
-                }
-                R.id.idSearch -> {
-                    // Already in search fragment, do nothing
-                    true
-                }
-                else -> false
-            }
-        }
-    }
 
     private fun setupSearchView() {
         val searchView = binding.searchBar

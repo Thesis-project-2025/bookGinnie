@@ -5,7 +5,7 @@
     android:id="@+id/idMainPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/Shadowed_Earth_1"
     tools:context=".MainPageFragment">
 
     <ProgressBar
@@ -31,7 +31,7 @@
             android:id="@+id/toolbarMainPage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/dahasiyah"
+            android:background="@color/Shadowed_Earth_2"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme">
 
@@ -71,7 +71,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout">
@@ -162,41 +161,51 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="Similar to..." android:textColor="@color/beyazimsi"
+                android:text="Similar to..."
+                android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:visibility="gone" /> <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSimilarTo1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            android:visibility="gone" /> <TextView
-            android:id="@+id/tvSimilarTo2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Similar to..." android:textColor="@color/beyazimsi"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="gone" /> <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSimilarTo2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:orientation="horizontal"
-            android:visibility="gone" /> <TextView
-            android:id="@+id/tvRandomGenre1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:text="Genre 1"
-            android:textColor="@color/beyazimsi"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="gone"/>
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSimilarTo1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvSimilarTo2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Similar to..."
+                android:textColor="@color/beyazimsi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSimilarTo2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvRandomGenre1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Genre 1"
+                android:textColor="@color/beyazimsi"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRandomGenre1"
@@ -204,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvRandomGenre2"
@@ -216,7 +225,7 @@
                 android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRandomGenre2"
@@ -224,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvRandomGenre3"
@@ -236,7 +245,7 @@
                 android:textColor="@color/beyazimsi"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRandomGenre3"
@@ -244,7 +253,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -257,41 +266,10 @@
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavView"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout" />
 
-    <!-- Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavView"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_marginBottom="0dp"
-        app:itemIconTint="@color/bottom_nav_item_color"
-        app:itemTextColor="@color/bottom_nav_item_color"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconPadding="2dp"
-        android:background="@color/dahasiyah"
-        app:itemPaddingTop="@dimen/cardview_default_elevation"
-        app:itemIconSize="22dp"
-        app:itemHorizontalTranslationEnabled="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_design" />
 
-    <ImageButton
-        android:id="@+id/fabButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="50dp"
-        android:background="@null"
-        android:scaleType="centerInside"
-        android:elevation="8dp"
-        android:src="@drawable/masal"
-        app:tint="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/bottomNavView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
