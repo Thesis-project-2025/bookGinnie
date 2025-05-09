@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     tools:context=".BookDetailsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,14 +25,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black">
+                android:background="?android:attr/colorBackground">
 
                 <!-- Toolbar -->
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbarBookDetails"
                     android:layout_width="0dp"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@color/dahasiyah"
+                    android:background="?attr/customToolbarBackgroundColor"
                     android:theme="?attr/actionBarTheme"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +76,7 @@
                     android:fontFamily="@font/poppins"
                     android:text="Book title"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -161,7 +162,7 @@
                     android:fontFamily="@font/poppins_italic"
                     android:text="Description"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -179,7 +180,7 @@
                     android:fontFamily="@font/poppins_italic"
                     android:text="Pages"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -195,7 +196,7 @@
                     android:fontFamily="@font/poppins_italic"
                     android:text="Year"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -211,7 +212,7 @@
                     android:fontFamily="@font/poppins_italic"
                     android:text="Rating"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -228,7 +229,7 @@
                     android:fontFamily="@font/poppins_italic"
                     android:text="Genres"
                     android:textAlignment="center"
-                    android:textColor="@color/beyazimsi"
+                    android:textColor="?android:attr/textColorPrimary"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

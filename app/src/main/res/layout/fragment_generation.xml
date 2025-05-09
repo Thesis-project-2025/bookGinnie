@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     tools:context=".GenerationFragment">
 
         <!-- Arka Plan Blob -->
@@ -12,11 +13,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/generation"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- TextInput (Prompt kutusu) -->
         <com.google.android.material.textfield.TextInputLayout
@@ -28,23 +28,23 @@
             android:layout_marginEnd="30dp"
             android:background="@drawable/rounded_input"
             app:boxBackgroundMode="none"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:paddingStart="8dp"
-            app:startIconDrawable="@drawable/pen"
-            app:startIconContentDescription="Pen Icon">
+            app:startIconContentDescription="Pen Icon"
+            app:startIconDrawable="@drawable/pen">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/promptEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_bold"
                     android:hint="Enter your prompt..."
                     android:inputType="text"
-                    android:fontFamily="@font/nunito_bold"
                     android:paddingStart="50dp"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/lightBeige" />
+                    android:textColor="@color/Shadowed_Earth_5"
+                    android:textColorHint="@color/Shadowed_Earth_5" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- ScrollView: Masal metni -->
@@ -53,16 +53,17 @@
 
         <ScrollView
             android:id="@+id/scrollViewMasal"
-            android:layout_width="275dp"
-            android:layout_height="221dp"
-            android:layout_marginStart="75dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="75dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="16dp"
             android:background="@android:color/transparent"
-            android:padding="32dp"
+            android:padding="16dp"
+            android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@id/saveContainer"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textInputLayout">
 
@@ -71,56 +72,51 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_bold"
-                    android:gravity="center"
+                    android:gravity="center_horizontal|top"
                     android:lineSpacingExtra="8dp"
-                    android:text="In the forest there is a great river and a beautiful palace. The young fox goes to the palace and asks the king for permission to marry his daughter.
-The king tells the young fox that he will grant his request on one condition: he must find a way to fill the great river with the king's precious jewels.
-The young fox returns to the forest and tries many things to fill the river, but nothing works.
-Finally, he comes up with the idea of using the king's jewels to fill the river. He takes the jewels and places them in the river. The jewels are so heavy that they sink to the bottom of the river and the river fills with jewels.
-The young fox returns to the palace and tells the king that he has filled the river with the king's jewels. The king is very pleased and gives his blessing to the young fox to marry his daughter.
-The young fox and his bride live happily ever after."
-                    android:textColor="@color/darkGreen"
-                    android:textSize="18sp" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="18sp"
+                    tools:text="Eskiden burada uzun bir masal metni olurdu..." />
         </ScrollView>
 
-        <ProgressBar
-            android:id="@+id/loadingProgressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingLottieView"
+            android:layout_width="150dp" android:layout_height="150dp" android:visibility="gone"
+            app:lottie_rawRes="@raw/bee_loading" app:lottie_autoPlay="true"
+            app:lottie_loop="true"
             app:layout_constraintBottom_toBottomOf="@+id/scrollViewMasal"
             app:layout_constraintEnd_toEndOf="@+id/scrollViewMasal"
             app:layout_constraintStart_toStartOf="@+id/scrollViewMasal"
-            app:layout_constraintTop_toTopOf="@+id/scrollViewMasal" />
+            app:layout_constraintTop_toTopOf="@+id/scrollViewMasal"
+            tools:visibility="visible" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/saveContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="130dp"
-            android:layout_marginBottom="32dp"
-            app:cardBackgroundColor="@color/turuncu"
-            app:cardCornerRadius="32dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginBottom="48dp"
+            app:cardBackgroundColor="@color/Shadowed_Earth_4"
+            app:cardCornerRadius="24dp"
             app:cardElevation="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scrollViewMasal">
+            app:layout_constraintStart_toStartOf="parent">
 
                 <Button
                     android:id="@+id/btnSaveStory"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/turuncu"
                     android:fontFamily="@font/nunito_bold"
-                    android:padding="10dp"
-                    android:text="SAVE"
-                    android:textColor="@color/mainBlue"
-                    android:textSize="16sp" />
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:text="KAYDET"
+                    android:textColor="@color/Shadowed_Earth_5"
+                    android:textSize="16sp"
+                    android:backgroundTint="@android:color/transparent"
+                    app:layout_constraintTop_toBottomOf="@id/scrollViewMasal" />
         </androidx.cardview.widget.CardView>
 
         <!-- Görseller -->
@@ -129,8 +125,8 @@ The young fox and his bride live happily ever after."
             android:layout_width="155dp"
             android:layout_height="133dp"
             android:src="@drawable/rightcorner"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -139,18 +135,8 @@ The young fox and his bride live happily ever after."
             android:layout_marginStart="64dp"
             android:layout_marginTop="95dp"
             android:src="@drawable/lion"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="107dp"
-            android:layout_height="64dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="15dp"
-            android:src="@drawable/grass"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView10"
@@ -159,8 +145,8 @@ The young fox and his bride live happily ever after."
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/star"
-            app:layout_constraintTop_toTopOf="@id/blobShape"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/blobShape" />
 
         <ImageView
             android:id="@+id/imageView7"
@@ -168,8 +154,8 @@ The young fox and his bride live happily ever after."
             android:layout_height="108dp"
             android:layout_marginStart="112dp"
             android:src="@drawable/star"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView5"
@@ -178,6 +164,6 @@ The young fox and his bride live happily ever after."
             android:layout_marginStart="144dp"
             android:layout_marginTop="64dp"
             android:src="@drawable/star"
-            app:layout_constraintTop_toTopOf="@id/blobShape"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/blobShape" />
 </androidx.constraintlayout.widget.ConstraintLayout>

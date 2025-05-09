@@ -43,6 +43,9 @@
         <item name="customButtonTextColor">@color/siyahimsi</item>
         <item name="baselineSearchColor">@color/Shadowed_Earth_4</item>
         <item name="fabButtonColor">@color/Shadowed_Earth_4</item>
+
+        <item name="aydinlikta_mor_karanlikta_beyaz">@color/Shadowed_Earth_2</item>
+        <item name="karanlikta_mor_aydinlikta_beyaz">@color/beyazimsi</item>
     </style>
 
     <style name="Theme.BookGenie" parent="Base.Theme.BookGenie" />

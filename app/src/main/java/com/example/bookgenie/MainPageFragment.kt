@@ -743,7 +743,7 @@ class MainPageFragment : Fragment() {
                         targetAdapter = forYouAdapter,
                         targetTextView = binding.tvForYou,
                         targetRecyclerView = binding.rvForYou,
-                        sectionTitle = "Sizin İçin Önerilenler",
+                        sectionTitle = "For You",
                         setLoadingFlag = { isForYouLoading = it }
                     )
                 } else {

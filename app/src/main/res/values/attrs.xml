@@ -10,4 +10,6 @@
     <attr name="navigationBottomColor" format="color" />
     <attr name="baselineSearchColor" format="color" />
     <attr name="fabButtonColor" format="color" />
+    <attr name="aydinlikta_mor_karanlikta_beyaz" format="color" />
+    <attr name="karanlikta_mor_aydinlikta_beyaz" format="color" />
 </resources>

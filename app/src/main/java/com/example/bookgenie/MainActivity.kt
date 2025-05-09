@@ -74,7 +74,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.signUpFragment,
                 R.id.fairyTaleFragment,
                 R.id.generationFragment,
-                R.id.speechFragment
+                R.id.speechFragment,
+                R.id.bookDetailsFragment
                 -> true
                 else -> false
             }
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.background = null
 
         binding.fab.setOnClickListener {
-            navController.navigate(R.id.mainToFairy)
+            navController.navigate(R.id.action_global_fairyFragment)
         }
 
         // FAB Animasyonları (İsteğe bağlı)
@@ -110,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             val bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
             binding.fab.startAnimation(bounceAnimation)
             val pulseAnimation = AnimationUtils.loadAnimation(this, R.anim.pulse)
-            binding.fab.startAnimation(pulseAnimation) // İkisini aynı anda başlatma
+            binding.fab.startAnimation(pulseAnimation)
         } catch (e: Exception) {
             e.printStackTrace()
         }

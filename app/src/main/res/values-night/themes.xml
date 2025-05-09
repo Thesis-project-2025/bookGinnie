@@ -43,6 +43,9 @@
         <item name="customButtonTextColor">@color/beyazimsi</item>
         <item name="baselineSearchColor">@color/Shadowed_Earth_5</item>
         <item name="fabButtonColor">@color/Shadowed_Earth_6</item>
+
+        <item name="aydinlikta_mor_karanlikta_beyaz">@color/beyazimsi</item>
+        <item name="karanlikta_mor_aydinlikta_beyaz">@color/Shadowed_Earth_2</item>
     </style>
 
     <!-- Uygulamanızın ana teması (values/themes.xml'deki ile aynı ismi taşımalı) -->
