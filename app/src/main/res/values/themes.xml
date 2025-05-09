@@ -1,9 +1,48 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme for Light Mode (Default). -->
     <style name="Base.Theme.BookGenie" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:statusBarColor">@color/beige</item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/mainBlue</item> <!-- Örnek, kendi ana renginiz -->
+        <item name="colorPrimaryVariant">@color/blue3</item> <!-- Örnek -->
+        <item name="colorOnPrimary">@color/white</item> <!-- Ana rengin üzerindeki yazı -->
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/softPurple</item> <!-- Örnek, kendi ikincil renginiz -->
+        <item name="colorSecondaryVariant">@color/softPurple_darker</item> <!-- Örnek -->
+        <item name="colorOnSecondary">@color/black</item> <!-- İkincil rengin üzerindeki yazı -->
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/beyazimsi</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
+        <!-- Navigation bar color -->
+        <item name="android:navigationBarColor">@color/beyazimsi</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/beyazimsi</item>
+        <item name="backgroundColor">@color/beyazimsi</item>
+        <item name="colorSurface">@color/white</item>
+
+        <!-- Text colors -->
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/siyahimsi</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Özel Toolbar ve BottomNav Arka Planları (Açık Mod) -->
+        <item name="customToolbarBackgroundColor">@color/Shadowed_Earth_4</item>
+        <item name="customBottomNavBackgroundColor">@color/Shadowed_Earth_4</item>
+
+        <item name="customSwitchThumbColor">@color/Shadowed_Earth_4</item>
+        <item name="customSwitchTrackColor">@color/Shadowed_Earth_4</item>
+
+        <item name="customButtonBackgroundColor">@color/Shadowed_Earth_4</item> <!-- Veya @color/kremimsi -->
+        <item name="navigationBottomColor">@color/Shadowed_Earth_4</item>
+        <item name="customButtonTextColor">@color/siyahimsi</item>
+        <item name="baselineSearchColor">@color/Shadowed_Earth_4</item>
+        <item name="fabButtonColor">@color/Shadowed_Earth_4</item>
     </style>
 
     <style name="Theme.BookGenie" parent="Base.Theme.BookGenie" />

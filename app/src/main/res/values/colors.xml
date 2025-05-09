@@ -36,20 +36,24 @@
     <color name="Midnight_Shadows_2">#16213E</color>
     <color name="Midnight_Shadows_3">#0F3460</color>
     <color name="Midnight_Shadows_4">#E94560</color>
+    <color name="E94560_darker">#C33A52</color> <!-- Midnight_Shadows_4 (@color/E94560) renginin biraz daha koyu tonu -->
     <color name="Midnight_Shadows_5">#F9F9F9</color>
 
-    <color name="Shadowed_Earth_1">#1F1D1D</color>
+    <color name="Shadowed_Earth_1">#2C1832</color>
     <color name="Shadowed_Earth_2">#311B38</color>
     <color name="Shadowed_Earth_3">#4A2A52</color>
     <color name="Shadowed_Earth_4">#6F6073</color>
     <color name="Shadowed_Earth_5">#F9F9F9</color>
     <color name="Shadowed_Earth_6">#6A1E55</color>
+    <color name="softPurple_darker">#8A8FB7</color>
 
     <color name="search1">#9BCF53</color>
     <color name="search2">#FC4100</color>
     <color name="search3">#7BC9FF</color>
     <color name="search4">#D76C82</color>
     <color name="search5">#FF9F00</color>
+
+
 
 
 

@@ -5,7 +5,7 @@
     android:id="@+id/idMainPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Shadowed_Earth_1"
+    android:background="?android:attr/colorBackground"
     tools:context=".MainPageFragment">
 
     <ProgressBar
@@ -31,7 +31,7 @@
             android:id="@+id/toolbarMainPage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/Shadowed_Earth_2"
+            android:background="?attr/customToolbarBackgroundColor"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme">
 
@@ -55,8 +55,8 @@
                 android:background="@drawable/rounded_background"
                 android:elevation="2dp"
                 android:queryHint="Search for your favorite book"
-                android:textColor="@color/lightBeige"
-                android:textColorHint="@color/lightBeige"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Top Rated Books"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -106,7 +106,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="High-Rated Fiction Books"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -124,7 +124,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="High-Rated Nonfiction Books"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -142,7 +142,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Sizin İçin Önerilenler"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -162,7 +162,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Similar to..."
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -182,7 +182,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Similar to..."
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -202,7 +202,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Genre 1"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -222,7 +222,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Genre 2"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -242,7 +242,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Genre 3"
-                android:textColor="@color/beyazimsi"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:visibility="gone" />

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Diğer attribute'larınız varsa burada kalabilir -->
+    <attr name="customToolbarBackgroundColor" format="color" />
+    <attr name="customBottomNavBackgroundColor" format="color" />
+    <attr name="customSwitchThumbColor" format="color" />
+    <attr name="customSwitchTrackColor" format="color" />
+    <attr name="customButtonBackgroundColor" format="color" />
+    <attr name="customButtonTextColor" format="color" />
+    <attr name="navigationBottomColor" format="color" />
+    <attr name="baselineSearchColor" format="color" />
+    <attr name="fabButtonColor" format="color" />
+</resources>

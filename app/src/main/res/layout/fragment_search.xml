@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Shadowed_Earth_1"
+    android:background="?android:attr/colorBackground"
     tools:context=".SearchFragment">
 
     <!-- Toolbar with SearchView -->
@@ -12,7 +12,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/Shadowed_Earth_2"
+        android:background="?attr/customToolbarBackgroundColor"
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,8 +37,8 @@
             android:background="@drawable/rounded_background"
             android:elevation="2dp"
             android:queryHint="Search for your favorite book"
-            android:textColor="@color/beyazimsi"
-            android:textColorHint="@color/beyazimsi"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="@color/black"
             app:searchIcon="@drawable/baseline_search_24" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -65,7 +65,7 @@
         android:layout_marginEnd="16dp"
         android:text="Explore by Genre"
         android:textAlignment="center"
-        android:textColor="@color/beyazimsi"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

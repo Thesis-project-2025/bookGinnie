@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="@color/Shadowed_Earth_2"
+        app:backgroundTint="?attr/navigationBottomColor"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="50dp">
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/masal"
-        app:backgroundTint="@color/Shadowed_Earth_6"
+        app:backgroundTint="?attr/navigationBottomColor"
         app:layout_anchor="@id/bottomAppBar"
         app:maxImageSize="40dp"
         app:tint="@null" />

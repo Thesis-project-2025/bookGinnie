@@ -1,36 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/idSettingsPage"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    tools:context=".SettingsFragment">
 
-    <Button
-        android:id="@+id/buttonGetRecommendations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Önerileri Getir" />
-
-    <Button
-        android:id="@+id/buttonGetGenreRecommendations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Genre bazlı Önerileri Getir" />
-
-    <Button
-        android:id="@+id/buttonGetSimilarBooks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Benzer Kitaplar Getir" />
-
-
-    <TextView
-        android:id="@+id/textResult"
+    <!-- Üst toolbar alanı -->
+    <FrameLayout
+        android:id="@+id/toolbarFrameLayoutSettings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Sonuç burada gözükecek"
-        android:textAppearance="?android:textAppearanceMedium" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-</LinearLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarSettingsPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/customToolbarBackgroundColor"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:title="Settings"
+            app:titleTextColor="@color/beige" />
+    </FrameLayout>
+
+    <!-- Scroll içeriği -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollViewSettings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbarFrameLayoutSettings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:ignore="ExtraText">
+
+            <!-- Hesap Ayarları -->
+            <Button
+                android:id="@+id/buttonEditProfile"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:drawableRight="@drawable/edit_arrow_right"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical|start"
+                android:padding="8dp"
+                android:text="Edit Profile"
+                android:textAllCaps="false"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:stateListAnimator="@null"
+                android:textStyle="bold" />
+
+            <!-- Bildirimler için Switch -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchNotifications"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Notifications  "
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:thumbTint="?attr/customSwitchThumbColor"
+                app:trackTint="?attr/customSwitchTrackColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Tema değişimi için Switch -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchTheme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dark Mode  "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                android:layout_marginTop="24dp"
+                android:padding="8dp"
+                app:thumbTint="?attr/customSwitchThumbColor"
+                app:trackTint="?attr/customSwitchTrackColor"
+                app:layout_constraintTop_toBottomOf="@id/switchNotifications"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

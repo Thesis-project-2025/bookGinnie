@@ -90,6 +90,15 @@
         <action
             android:id="@+id/settingsToFairy"
             app:destination="@id/fairyTaleFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"

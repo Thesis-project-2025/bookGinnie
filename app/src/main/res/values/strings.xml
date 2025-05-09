@@ -18,4 +18,25 @@
     <string name="masal1">Choose what</string>
     <string name="masal2">to do today?</string>
 
+
+    <string name="profile_picture_description">User Profile Picture</string>
+    <string name="change_picture">Change Profile Picture</string>
+    <string name="name_surname">Name Surname</string>
+    <string name="email_address">E-mail Address</string>
+    <string name="age">Age</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="cancel">Cancel</string>
+    <string name="change_password">Change Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="password_changed_success">Password changed successfully.</string>
+    <string name="passwords_do_not_match">New passwords does not match!.</string>
+    <string name="fill_all_fields">Please fill in all blank spaces.</string>
+    <string name="profile_updated_success">Profile updated successfully.</string>
+    <string name="error_invalid_email">Unvalid e-mail address.</string>
+    <string name="error_invalid_age">Unvalid age.</string>
+    <string name="error_name_empty">Name cannot be blank.</string>
+
 </resources>
