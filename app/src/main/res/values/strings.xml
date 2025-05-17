@@ -58,4 +58,10 @@
     <string name="log_out_confirm">Log Out</string>
     <string name="cancel_dialog">Cancel</string>
     <string name="logged_out_successfully">Logged out successfully.</string>
+    <string name="select_avatar_title">Choose an avatar.</string>
+    <string name="avatar_updated">Avatar updated.</string>
+    <string name="avatar_update_failed">An error occurred while updating the avatar.</string>
+
+    <string name="explore_by_genre_text">Explore by Genre</string>
+    <string name="book_cover_content_description">Cover Page</string>
 </resources>

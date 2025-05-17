@@ -5,22 +5,23 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.bookgenie.databinding.CardDesignBinding
 import com.bumptech.glide.Glide
+import com.example.bookgenie.databinding.ItemBookDetailedBinding // CardDesignBinding yerine bunu kullanacağız
+import java.util.Locale
 
 class BookAdapter(
     private var mContext: Context,
     private var bookList: List<Books>,
-    private val fragmentType: String = "main" // Add a parameter to identify the fragment
+    private val fragmentType: String = "main" // Bu parametre navigasyon için kullanılıyor
 ) : RecyclerView.Adapter<BookAdapter.BookHolder>() {
 
-
-    inner class BookHolder(var tasarim: CardDesignBinding) : RecyclerView.ViewHolder(tasarim.root)
+    // ViewHolder'ı ItemBookDetailedBinding kullanacak şekilde güncelliyoruz
+    inner class BookHolder(var binding: ItemBookDetailedBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookHolder {
-        val binding = CardDesignBinding.inflate(LayoutInflater.from(mContext), parent, false)
+        // Yeni layout'umuzu inflate ediyoruz
+        val binding = ItemBookDetailedBinding.inflate(LayoutInflater.from(mContext), parent, false)
         return BookHolder(binding)
     }
 
@@ -30,36 +31,53 @@ class BookAdapter(
 
     override fun onBindViewHolder(holder: BookHolder, position: Int) {
         val book = bookList[position]
-        val t = holder.tasarim
+        val b = holder.binding // binding değişkenine daha kısa bir isim verelim
 
-        // Load the book's image using Glide
+        // Kitap başlığını ayarla
+        b.tvBookTitle.text = book.title.ifEmpty { "Başlık Yok" }
+
+        // Yazar adını ayarla
+        b.tvBookAuthor.text = book.author_name.ifEmpty { "Yazar Bilgisi Yok" }
+
+        // Kitap puanını RatingBar'a ve TextView'a ayarla
+        val rating = book.average_rating.toFloat()
+        b.rbBookRating.rating = rating
+        // Puanı "(X.X)" formatında göster
+        b.tvBookRatingValue.text = String.format(Locale.US, "(%.1f)", book.average_rating)
+
+
+        // Kitabın kapak resmini Glide ile yükle
         Glide.with(mContext)
             .load(book.imageUrl)
-            .placeholder(R.drawable.img)
-            .into(t.imageViewBook)
+            .placeholder(R.drawable.img) // Mevcut placeholder'ınız
+            .error(R.drawable.img) // Hata durumunda gösterilecek resim (placeholder ile aynı olabilir)
+            .into(b.ivBookCover) // item_book_detailed.xml'deki ImageView ID'si
 
-        // Set an OnClickListener that checks which fragment we're in
-        t.root.setOnClickListener {
+        // Tıklama olayını ayarla
+        b.root.setOnClickListener {
             try {
-                // Navigate based on the fragment type
+                // fragmentType'a göre navigasyon yap
                 if (fragmentType == "main") {
+                    // MainPageFragment'tan geliyorsa BookDetails'e git
+                    // Navigasyon action'ınızın adının bu olduğunu varsayıyorum
                     val action = MainPageFragmentDirections.mainToBookDetails(book)
                     it.findNavController().navigate(action)
                 } else {
+                    // SearchFragment'tan (veya başka bir yerden) geliyorsa BookDetails'e git
+                    // Navigasyon action'ınızın adının bu olduğunu varsayıyorum
                     val action = SearchFragmentDirections.searchToBookDetails(book)
                     it.findNavController().navigate(action)
                 }
             } catch (e: Exception) {
-                // Log the error but prevent crash
-                Log.e("BookAdapter", "Navigation error: ${e.message}")
+                // Hata olursa logla ve çökmeyi engelle
+                Log.e("BookAdapter", "Navigation error: ${e.message}", e)
             }
         }
     }
 
+    // Liste güncelleme fonksiyonu (DiffUtil ile daha verimli hale getirilebilir)
     fun updateList(newBooks: List<Books>) {
         bookList = newBooks
-        notifyDataSetChanged()
+        notifyDataSetChanged() // Daha verimli güncellemeler için DiffUtil kullanmayı düşünebilirsiniz
     }
-
 }
-

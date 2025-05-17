@@ -1,22 +1,24 @@
 package com.example.bookgenie
 
+import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+// import android.widget.Spinner // Spinner'a doğrudan erişim gerekmiyorsa kaldırılabilir, binding üzerinden erişilecek
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.bookgenie.databinding.FragmentSearchBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -26,12 +28,24 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
+
+// Sıralama kriterleri için enum (kullanıcının son verdiği haliyle)
+enum class SortCriteria(val displayName: String) {
+    NONE("Filter: No Sorting"),
+    TITLE_ASC("Book Title (A-Z)"),
+    TITLE_DESC("Book Title (Z-A)"),
+    AUTHOR_ASC("Author (A-Z)"),
+    AUTHOR_DESC("Author (Z-A)"),
+    RATING_ASC("Rating (Low to High)"),
+    RATING_DESC("Rating (High to Low)")
+}
 
 class SearchFragment : Fragment() {
     private lateinit var binding: FragmentSearchBinding
     private val firestore = FirebaseFirestore.getInstance()
 
-    // Genre list for display
+    // Tür listesi
     private val genreList = listOf(
         "Fiction", "Romance", "Nonfiction", "Fantasy", "Contemporary", "Mystery",
         "Audiobook", "Young Adult", "Historical Fiction", "Childrens", "Historical",
@@ -53,21 +67,21 @@ class SearchFragment : Fragment() {
         "BDSM", "Action", "Juvenile", "Regency", "Feminism"
     )
 
-    // Genre adapter
     private lateinit var genreAdapter: GenreAdapter
-
-    // Search functionality variables
     private lateinit var bookAdapter: BookAdapter
-    private val bookList = ArrayList<Books>()
+    private val bookList = ArrayList<Books>() // Sıralanacak ana kitap listesi
     private var lastVisibleDocument: DocumentSnapshot? = null
     private var isLoading = false
     private var isLastPage = false
     private var searchQuery: String? = null
     private var selectedGenre: String? = null
-    private val booksPerPage = 2 // Limit to 2 books per page as requested
+    private val booksPerPage = 10
 
-    // View state
     private var isInGenreMode = true
+    private var currentSortCriteria: SortCriteria = SortCriteria.NONE
+
+    // SearchView listener'ını saklamak için üye değişken
+    private var searchViewQueryTextListener: SearchView.OnQueryTextListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,74 +89,149 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
+        Log.d("SearchFragment", "onCreateView çağrıldı.")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("SearchFragment", "onViewCreated çağrıldı. Mevcut selectedGenre: $selectedGenre, searchQuery: $searchQuery, currentSortCriteria: $currentSortCriteria")
 
+        setupSortSpinner()
         setupSearchView()
         setupBackPressHandler()
         setupGenreRecyclerView()
         setupBookRecyclerView()
 
-        // Default to genre mode when first opening
-        switchToGenreMode()
+        if (selectedGenre != null) {
+            Log.d("SearchFragment", "onViewCreated: '$selectedGenre' türü için görünüm geri yükleniyor. Sıralama: $currentSortCriteria")
+            // Listener'ı geçici olarak kaldır
+            binding.searchBar.setOnQueryTextListener(null)
+            binding.searchBar.setQuery("", false)
+            binding.searchBar.clearFocus()
+            // Listener'ı geri yükle
+            binding.searchBar.setOnQueryTextListener(searchViewQueryTextListener)
+
+            binding.spinnerSortOptions.setSelection(currentSortCriteria.ordinal, false)
+            lastVisibleDocument = null
+            isLastPage = false
+            loadBooksByGenre(selectedGenre!!)
+        } else if (searchQuery != null && searchQuery!!.isNotEmpty()) {
+            Log.d("SearchFragment", "onViewCreated: '$searchQuery' araması için görünüm geri yükleniyor.")
+            binding.searchBar.setQuery(searchQuery, true)
+        } else {
+            Log.d("SearchFragment", "onViewCreated: Varsayılan olarak tür moduna geçiliyor.")
+            switchToGenreMode()
+        }
     }
 
+    private fun setupSortSpinner() {
+        val sortOptions = SortCriteria.values().map { it.displayName }.toTypedArray()
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sortOptions)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerSortOptions.adapter = spinnerAdapter
+
+        binding.spinnerSortOptions.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedSort = SortCriteria.values()[position]
+                if (currentSortCriteria != selectedSort) {
+                    currentSortCriteria = selectedSort
+                    Log.d("SearchFragment", "Sıralama kriteri değişti: $currentSortCriteria")
+                    applySortingAndRefreshAdapter()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { /* No action */ }
+        }
+    }
+
+    private fun applySortingAndRefreshAdapter() {
+        if (!::bookAdapter.isInitialized) {
+            updateSpinnerAndIconVisibility()
+            return
+        }
+        Log.d("SearchFragment", "$currentSortCriteria sıralaması ${bookList.size} öğeye uygulanıyor")
+
+        when (currentSortCriteria) {
+            SortCriteria.TITLE_ASC -> bookList.sortBy { it.title.lowercase(Locale.getDefault()) }
+            SortCriteria.TITLE_DESC -> bookList.sortByDescending { it.title.lowercase(Locale.getDefault()) }
+            SortCriteria.AUTHOR_ASC -> bookList.sortBy { it.author_name.lowercase(Locale.getDefault()) }
+            SortCriteria.AUTHOR_DESC -> bookList.sortByDescending { it.author_name.lowercase(Locale.getDefault()) }
+            SortCriteria.RATING_ASC -> bookList.sortBy { it.average_rating }
+            SortCriteria.RATING_DESC -> bookList.sortByDescending { it.average_rating }
+            SortCriteria.NONE -> { /* No specific sort */ }
+        }
+        bookAdapter.notifyDataSetChanged()
+        updateSpinnerAndIconVisibility()
+    }
 
     private fun setupSearchView() {
         val searchView = binding.searchBar
         val searchEditText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
 
-        searchEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
-        searchEditText.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
+        try {
+            val beigeColor = ContextCompat.getColor(requireContext(), R.color.beige)
+            searchEditText.setTextColor(beigeColor)
+            searchEditText.setHintTextColor(beigeColor)
+        } catch (e: Resources.NotFoundException) {
+            Log.e("SearchFragment", "R.color.beige renk kaynağı bulunamadı.", e)
+        }
 
-        // Switch to search mode when the search view gains focus
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                switchToSearchMode()
-                Log.d("SearchFragment", "Switched to search mode due to focus")
+                if(selectedGenre == null) {
+                    binding.genreTitle.visibility = View.GONE
+                }
+                updateSpinnerAndIconVisibility()
             }
         }
 
-        // Add debounce to avoid too many queries
         var searchJob: Job? = null
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        // Listener'ı oluşturup değişkene ata
+        searchViewQueryTextListener = object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                // Cancel previous job if it's still active
                 searchJob?.cancel()
-
                 if (newText.isEmpty()) {
-                    clearSearchResults()
-                    Log.d("SearchFragment", "Cleared search results")
+                    if (!searchView.hasFocus() && !isInGenreMode) {
+                        Log.d("SearchFragment", "onQueryTextChange: Metin boş, odak yok, tür modunda değil. Tür moduna geçiliyor.")
+                        switchToGenreMode()
+                    } else if (searchView.hasFocus()) {
+                        Log.d("SearchFragment", "onQueryTextChange: Metin boş, odak var. Arama sonuçları temizleniyor.")
+                        clearSearchResults()
+                        binding.genreTitle.visibility = View.GONE
+                        binding.rvBooks.visibility = View.VISIBLE
+                        binding.rvGenres.visibility = View.GONE
+                        updateSpinnerAndIconVisibility()
+                    }
                 } else {
-                    switchToSearchMode() // Ensure we're in search mode
-
-                    // Use debounce to prevent firing too many queries
+                    if (isInGenreMode) {
+                        selectedGenre = null
+                        switchToSearchMode()
+                    } else if (selectedGenre == null) {
+                        binding.genreTitle.visibility = View.GONE
+                    }
+                    updateSpinnerAndIconVisibility()
                     searchJob = CoroutineScope(Dispatchers.Main).launch {
-                        delay(300) // Wait for 300ms before executing search
-                        clearSearchResults() // Clear before new search
-                        lastVisibleDocument = null // Reset for new search
+                        delay(300)
+                        lastVisibleDocument = null
+                        isLastPage = false
                         searchBooks(newText.trim())
-                        Log.d("SearchFragment", "Searching for: $newText")
                     }
                 }
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
+                searchJob?.cancel()
                 if (query.isNotEmpty()) {
-                    switchToSearchMode() // Ensure we're in search mode
-                    clearSearchResults() // Clear before new search
-                    lastVisibleDocument = null // Reset for new search
+                    lastVisibleDocument = null
+                    isLastPage = false
                     searchBooks(query.trim())
-                    Log.d("SearchFragment", "Search submitted: $query")
                 }
                 return true
             }
-        })
+        }
+        // Oluşturulan listener'ı SearchView'a ata
+        searchView.setOnQueryTextListener(searchViewQueryTextListener)
     }
 
     private fun setupBackPressHandler() {
@@ -150,11 +239,28 @@ class SearchFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (!isInGenreMode) {
+                    Log.d("SearchFragment", "Geri tuşuna basıldı. isInGenreMode: $isInGenreMode, Arama Sorgusu: '${binding.searchBar.query}'")
+                    if (!binding.searchBar.query.isNullOrEmpty()){
+                        // Listener'ı geçici olarak kaldır
+                        binding.searchBar.setOnQueryTextListener(null)
+                        binding.searchBar.setQuery("", false)
+                        // Listener'ı geri yükle
+                        binding.searchBar.setOnQueryTextListener(searchViewQueryTextListener)
+
+                        if (!binding.searchBar.hasFocus() && !isInGenreMode) {
+                            switchToGenreMode()
+                        } else {
+                            clearSearchResults()
+                            binding.genreTitle.visibility = View.GONE
+                            binding.rvBooks.visibility = View.VISIBLE
+                            binding.rvGenres.visibility = View.GONE
+                            updateSpinnerAndIconVisibility()
+                        }
+                    } else if (!isInGenreMode) {
                         switchToGenreMode()
                     } else {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }
@@ -162,201 +268,248 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupGenreRecyclerView() {
-        // Set up grid layout for genres (3 columns)
         binding.rvGenres.layoutManager = GridLayoutManager(requireContext(), 2)
-
-        // Initialize genre adapter
         genreAdapter = GenreAdapter(requireContext(), genreList) { genre ->
-            // Handle genre click
-            selectedGenre = genre
+            Log.d("SearchFragment", "Tür tıklandı: $genre")
+            this.selectedGenre = genre
+            this.searchQuery = null
+
+            // Listener'ı geçici olarak kaldır
+            binding.searchBar.setOnQueryTextListener(null)
+            binding.searchBar.setQuery("", false)
+            binding.searchBar.clearFocus()
+            // Listener'ı geri yükle
+            binding.searchBar.setOnQueryTextListener(searchViewQueryTextListener)
+
+            currentSortCriteria = SortCriteria.NONE
+            binding.spinnerSortOptions.setSelection(SortCriteria.NONE.ordinal, false)
+
+            lastVisibleDocument = null
+            isLastPage = false
             loadBooksByGenre(genre)
         }
-
         binding.rvGenres.adapter = genreAdapter
     }
 
     private fun setupBookRecyclerView() {
-        // Set up staggered grid layout for books (2 columns)
-        binding.rvBooks.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
-        // Initialize book adapter
-        bookAdapter = BookAdapter(requireContext(), bookList, "search")
+        binding.rvBooks.layoutManager = LinearLayoutManager(requireContext())
+        bookAdapter = BookAdapter(requireContext(), bookList, "search_detailed")
         binding.rvBooks.adapter = bookAdapter
 
-        // Add scroll listener for pagination
         binding.rvBooks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val visibleItemCount = layoutManager.childCount
-                val firstVisibleItem = layoutManager.findFirstVisibleItemPositions(null).minOrNull() ?: 0
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                if (!isLoading && !isLastPage &&
-                    (visibleItemCount + firstVisibleItem) >= (totalItemCount * 0.9).toInt()
-                ) {
-                    // Load more books when scrolling near the end
+                if (!isLoading && !isLastPage && totalItemCount > 0 &&
+                    (visibleItemCount + firstVisibleItemPosition) >= totalItemCount &&
+                    firstVisibleItemPosition >= 0) {
                     selectedGenre?.let { loadBooksByGenre(it) } ?: searchQuery?.let { searchBooks(it) }
                 }
             }
         })
     }
 
+    private fun updateSpinnerAndIconVisibility() {
+        val shouldShow = !isInGenreMode && binding.rvBooks.visibility == View.VISIBLE && bookList.isNotEmpty()
+        binding.spinnerSortOptions.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        binding.ivSortIcon.visibility = if (shouldShow) View.VISIBLE else View.GONE
+        Log.d("SearchFragment", "Spinner ve İkon görünürlüğü güncellendi: ${binding.spinnerSortOptions.visibility == View.VISIBLE}")
+    }
+
     private fun switchToGenreMode() {
+        Log.d("SearchFragment", "switchToGenreMode çağrıldı.")
         isInGenreMode = true
+        binding.genreTitle.text = getString(R.string.explore_by_genre_text)
         binding.genreTitle.visibility = View.VISIBLE
         binding.rvGenres.visibility = View.VISIBLE
         binding.rvBooks.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
-        binding.searchBar.setQuery("", false)
-        binding.searchBar.clearFocus()
 
-        // Reset search state
+        // Listener'ı geçici olarak kaldır
+        binding.searchBar.setOnQueryTextListener(null)
+        if (binding.searchBar.query.isNotEmpty()) {
+            binding.searchBar.setQuery("", false)
+        }
+        binding.searchBar.clearFocus()
+        // Listener'ı geri yükle
+        binding.searchBar.setOnQueryTextListener(searchViewQueryTextListener)
+
         clearSearchResults()
         selectedGenre = null
-
-        Log.d("SearchFragment", "Switched to genre mode")
+        searchQuery = null
+        currentSortCriteria = SortCriteria.NONE
+        if(::binding.isInitialized && binding.spinnerSortOptions.adapter != null) { // Adapter null kontrolü eklendi
+            binding.spinnerSortOptions.setSelection(SortCriteria.NONE.ordinal, false)
+        }
+        updateSpinnerAndIconVisibility()
     }
 
     private fun switchToSearchMode() {
+        Log.d("SearchFragment", "switchToSearchMode çağrıldı. Seçili Tür: $selectedGenre")
         isInGenreMode = false
-        binding.genreTitle.visibility = View.GONE
+        if (selectedGenre == null) {
+            binding.genreTitle.visibility = View.GONE
+        } else {
+            binding.genreTitle.text = selectedGenre
+            binding.genreTitle.visibility = View.VISIBLE
+        }
         binding.rvGenres.visibility = View.GONE
         binding.rvBooks.visibility = View.VISIBLE
-
-        Log.d("SearchFragment", "Switched to search mode")
     }
 
     private fun clearSearchResults() {
-        bookList.clear()
-        bookAdapter.notifyDataSetChanged()
+        Log.d("SearchFragment", "Kitap sonuçları temizleniyor. Önceki boyut: ${bookList.size}")
+        val previousSize = bookList.size
+        if (previousSize > 0) {
+            bookList.clear()
+            if (::bookAdapter.isInitialized) {
+                bookAdapter.notifyItemRangeRemoved(0, previousSize)
+            }
+        }
         lastVisibleDocument = null
         isLastPage = false
     }
 
     private fun loadBooksByGenre(genre: String) {
-        if (isLoading) return
+        if (isLoading || !isAdded) {
+            Log.w("SearchFragment", "loadBooksByGenre: Yükleme iptal edildi (isLoading=$isLoading, isAdded=$isAdded)")
+            return
+        }
         isLoading = true
 
-        // If this is a new genre search, clear previous results
-        if (selectedGenre != genre || lastVisibleDocument == null) {
+        if (lastVisibleDocument == null) {
+            Log.d("SearchFragment", "loadBooksByGenre: İlk yükleme için kitap listesi temizleniyor.")
             clearSearchResults()
-            selectedGenre = genre
-            switchToSearchMode()
         }
 
+        switchToSearchMode()
         binding.progressBar.visibility = View.VISIBLE
-
-        Log.d("SearchFragment", "Loading books for genre: $genre")
+        Log.d("SearchFragment", "'$genre' türü için kitaplar yükleniyor. Sayfalama Belirteci: $lastVisibleDocument")
 
         var query = firestore.collection("books_data")
             .whereArrayContains("genres", genre)
             .limit(booksPerPage.toLong())
-
         lastVisibleDocument?.let { query = query.startAfter(it) }
 
         query.get()
             .addOnSuccessListener { documents ->
-                Log.d("SearchFragment", "Genre query returned ${documents.size()} documents")
+                if (!isAdded) return@addOnSuccessListener
+                val newBooks = ArrayList<Books>()
                 if (!documents.isEmpty) {
                     lastVisibleDocument = documents.documents.last()
                     for (document in documents) {
-                        val book = parseDocumentToBook(document)
-                        bookList.add(book)
-                        Log.d("SearchFragment", "Added book: ${book.title}")
+                        newBooks.add(parseDocumentToBook(document))
                     }
-                    bookAdapter.notifyDataSetChanged()
-
-                    // Check if we've reached the last page
+                    val initialSize = bookList.size
+                    bookList.addAll(newBooks)
+                    Log.d("SearchFragment", "loadBooksByGenre: ${newBooks.size} yeni kitap eklendi. Toplam: ${bookList.size}")
+                    if (::bookAdapter.isInitialized) {
+                        if (initialSize == 0 && newBooks.isNotEmpty()) {
+                            bookAdapter.notifyDataSetChanged()
+                        } else if (newBooks.isNotEmpty()) {
+                            bookAdapter.notifyItemRangeInserted(initialSize, newBooks.size)
+                        }
+                    }
                     isLastPage = documents.size() < booksPerPage
                 } else {
                     isLastPage = true
+                    if (bookList.isEmpty()) Log.d("SearchFragment", "'$genre' türü için kitap bulunamadı.")
                 }
-
+                applySortingAndRefreshAdapter()
                 isLoading = false
                 binding.progressBar.visibility = View.GONE
             }
             .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error loading books by genre: ${exception.message}")
+                if (!isAdded) return@addOnFailureListener
+                Log.e("Firestore", "'$genre' türü için kitap yükleme hatası: ${exception.message}", exception)
                 isLoading = false
                 binding.progressBar.visibility = View.GONE
+                updateSpinnerAndIconVisibility()
             }
     }
 
-    private fun searchBooks(query: String) {
-        if (isLoading) return
-        isLoading = true
-        searchQuery = query
-
-        // Only clear previous results if this is a new search
-        if (lastVisibleDocument == null) {
-            bookList.clear()
-            bookAdapter.notifyDataSetChanged()
+    private fun searchBooks(queryText: String) {
+        if (isLoading || !isAdded) {
+            Log.w("SearchFragment", "searchBooks: Yükleme iptal edildi (isLoading=$isLoading, isAdded=$isAdded)")
+            return
         }
+        isLoading = true
+        // Arama yapıldığında selectedGenre null olmalı, searchQuery ise güncel queryText olmalı.
+        // Bu atamalar onQueryTextChange veya onQueryTextSubmit içinde yapılmalı.
+        // this.searchQuery = queryText // Bu zaten onQueryTextChange/Submit içinde güncelleniyor
+        // this.selectedGenre = null   // Bu zaten onQueryTextChange/Submit içinde güncelleniyor
 
+        switchToSearchMode()
+
+        if (lastVisibleDocument == null) {
+            Log.d("SearchFragment", "searchBooks: İlk arama için kitap listesi temizleniyor.")
+            clearSearchResults()
+        }
         binding.progressBar.visibility = View.VISIBLE
+        Log.d("SearchFragment", "'$queryText' için kitap aranıyor. Sayfalama Belirteci: $lastVisibleDocument")
 
-        // Format query: convert to lowercase and trim
-        val formattedQuery = query.lowercase().trim()
-        Log.d("SearchFragment", "Searching for: $formattedQuery")
-
-        var firestoreQuery: Query = firestore.collection("books_data")
+        val formattedQuery = queryText.lowercase(Locale.getDefault()).trim()
+        var firestoreSearchQuery: Query = firestore.collection("books_data")
             .orderBy("title_lowercase")
             .startAt(formattedQuery)
             .endAt(formattedQuery + "\uf8ff")
             .limit(booksPerPage.toLong())
+        lastVisibleDocument?.let { firestoreSearchQuery = firestoreSearchQuery.startAfter(it) }
 
-        lastVisibleDocument?.let {
-            firestoreQuery = firestoreQuery.startAfter(it)
-        }
-
-        firestoreQuery.get()
+        firestoreSearchQuery.get()
             .addOnSuccessListener { documents ->
-                Log.d("SearchFragment", "Search query returned ${documents.size()} documents")
+                if (!isAdded) return@addOnSuccessListener
+                val newBooks = ArrayList<Books>()
                 if (!documents.isEmpty) {
                     lastVisibleDocument = documents.documents.last()
-                    val newBooks = ArrayList<Books>()
-
                     for (document in documents) {
                         val titleLowercase = document.getString("title_lowercase") ?: ""
-                        // Check if title contains all words in the search query
-                        if (formattedQuery.split(" ").all { titleLowercase.contains(it) }) {
-                            val book = parseDocumentToBook(document)
-                            newBooks.add(book)
-                            Log.d("SearchFragment", "Added book to results: ${book.title}")
+                        if (formattedQuery.split(" ").all { word -> titleLowercase.contains(word) }) {
+                            newBooks.add(parseDocumentToBook(document))
                         }
                     }
-
-                    if (newBooks.isEmpty()) {
-                        Log.d("SearchFragment", "No matching books found after filtering")
-                        isLastPage = documents.size() < booksPerPage
-                    } else {
+                    if (newBooks.isNotEmpty()) {
+                        val initialSize = bookList.size
                         bookList.addAll(newBooks)
-                        bookAdapter.notifyDataSetChanged()
+                        Log.d("SearchFragment", "searchBooks: ${newBooks.size} yeni kitap eklendi. Toplam: ${bookList.size}")
+                        if (::bookAdapter.isInitialized) {
+                            if (initialSize == 0 && newBooks.isNotEmpty()) {
+                                bookAdapter.notifyDataSetChanged()
+                            } else if (newBooks.isNotEmpty()) {
+                                bookAdapter.notifyItemRangeInserted(initialSize, newBooks.size)
+                            }
+                        }
+                    } else if (documents.size() > 0 && bookList.isEmpty()) {
+                        Log.d("SearchFragment", "İstemci tarafı filtreleme sonrası '$queryText' için eşleşen kitap bulunamadı.")
                     }
+                    isLastPage = documents.size() < booksPerPage
                 } else {
-                    Log.d("SearchFragment", "No more results from Firestore")
                     isLastPage = true
+                    if (bookList.isEmpty()) Log.d("SearchFragment", "'$queryText' için Firestore'dan sonuç gelmedi.")
                 }
-
+                applySortingAndRefreshAdapter()
                 isLoading = false
                 binding.progressBar.visibility = View.GONE
             }
             .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error searching books: ${exception.message}")
+                if (!isAdded) return@addOnFailureListener
+                Log.e("Firestore", "'$queryText' için kitap arama hatası: ${exception.message}", exception)
                 isLoading = false
                 binding.progressBar.visibility = View.GONE
+                updateSpinnerAndIconVisibility()
             }
     }
 
-    // Helper Functions (copied from MainPageFragment)
     private fun handleStringOrNaN(value: Any?): String {
         return when (value) {
             is String -> value
             is Number -> {
                 val doubleValue = value.toDouble()
-                if (doubleValue.isNaN()) "" else doubleValue.toString()
+                if (doubleValue.isNaN() || doubleValue.isInfinite()) "" else doubleValue.toString()
             }
             else -> ""
         }
@@ -393,12 +546,17 @@ class SearchFragment : Fragment() {
         val kindle_asin = handleStringOrNaN(document.get("kindle_asin"))
         val language_code = handleStringOrNaN(document.get("language_code"))
         val num_pages = convertStringOrIntToInt(document.get("num_pages"))
-        val publication_day = document.get("publication_day") as? List<String> ?: emptyList()
+        val publication_day_raw = document.get("publication_day")
+        val publication_day: List<String> = when (publication_day_raw) {
+            is List<*> -> publication_day_raw.mapNotNull { it?.toString() }
+            is String -> listOf(publication_day_raw)
+            else -> emptyList()
+        }
         val publication_month = convertStringOrIntToInt(document.get("publication_month"))
         val publication_year = convertStringOrIntToInt(document.get("publication_year"))
         val publisher = handleStringOrNaN(document.get("publisher"))
         val title = handleStringOrNaN(document.get("title"))
-        val rating_count = convertStringOrIntToInt(document.get("rating_count")) // Rating count'u al
+        val rating_count = convertStringOrIntToInt(document.get("rating_count"))
 
         return Books(
             authors,
@@ -422,5 +580,30 @@ class SearchFragment : Fragment() {
             title,
             rating_count
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("SearchFragment", "onDestroyView çağrıldı.")
+        // searchViewQueryTextListener = null // Listener'ı temizle
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("selectedGenre", selectedGenre)
+        outState.putString("searchQuery", searchQuery)
+        outState.putSerializable("currentSortCriteria", currentSortCriteria)
+        Log.d("SearchFragment", "onSaveInstanceState: selectedGenre=$selectedGenre, searchQuery=$searchQuery, sort=$currentSortCriteria")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            selectedGenre = savedInstanceState.getString("selectedGenre")
+            searchQuery = savedInstanceState.getString("searchQuery")
+            @Suppress("DEPRECATION")
+            currentSortCriteria = savedInstanceState.getSerializable("currentSortCriteria") as? SortCriteria ?: SortCriteria.NONE
+            Log.d("SearchFragment", "onCreate (restored): selectedGenre=$selectedGenre, searchQuery=$searchQuery, sort=$currentSortCriteria")
+        }
     }
 }
