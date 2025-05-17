@@ -2,7 +2,7 @@
     <string name="app_name">bookGenie</string>
     <string name="welcomeText">Welcome to bookGenie! Discover your next favourite book.</string>
     <string name="logInButtonText">Log In</string>
-    <string name="signUpButtonText">Sign Up</string>
+    <string name="signUpButtonText">Sıgn Up</string>
     <string name="logInWelcomeBackText">Welcome Back</string>
     <string name="logInText">Log in to your account using email or social account.</string>
     <string name="signUpCreateText">Create New Account</string>
@@ -38,5 +38,17 @@
     <string name="error_invalid_email">Unvalid e-mail address.</string>
     <string name="error_invalid_age">Unvalid age.</string>
     <string name="error_name_empty">Name cannot be blank.</string>
+    <string name="profile_picture_animation_description"></string>
+
+    <string name="profile_update_success">Profil başarıyla güncellendi.</string>
+    <string name="profile_update_failed">Profil güncellenirken hata oluştu.</string>
+    <string name="image_upload_success">Profil resmi yüklendi.</string>
+    <string name="image_upload_failed">Resim yüklenirken hata oluştu.</string>
+    <string name="password_reset_email_sent">Şifre sıfırlama e-postası gönderildi.</string>
+    <string name="password_reset_email_failed">Şifre sıfırlama e-postası gönderilemedi.</string>
+    <string name="select_profile_image">Profil Resmi Seç</string>
+    <string name="user_info_not_found">Kullanıcı bilgileri bulunamadı.</string>
+    <string name="error_loading_user_info">Bilgiler yüklenirken hata: %1$s</string>
+    <string name="please_sign_in">Lütfen önce giriş yapın.</string>
 
 </resources>

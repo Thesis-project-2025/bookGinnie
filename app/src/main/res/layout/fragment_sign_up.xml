@@ -6,13 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".SignUpFragment">
 
-
-    <!-- Lottie Animation -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
         android:layout_width="150dp"
         android:layout_height="150dp"
-
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@id/textView10"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,13 +20,11 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/kapi2" />
 
-    <!-- Başlık -->
-
     <TextView
         android:id="@+id/textView10"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="210dp"
+        android:layout_marginTop="180dp"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/signUpCreateText"
         android:textAlignment="center"
@@ -40,12 +35,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Alt başlık -->
     <TextView
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/nunito_bold"
         android:text="@string/signUpText"
         android:textAlignment="center"
@@ -55,13 +49,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textView10" />
 
-    <!-- Form alanları -->
     <EditText
         android:id="@+id/usernameSignUp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
         android:fontFamily="@font/nunito_bold"
@@ -80,7 +73,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
         android:fontFamily="@font/nunito_bold"
@@ -95,11 +88,30 @@
         app:layout_constraintTop_toBottomOf="@id/usernameSignUp" />
 
     <EditText
+        android:id="@+id/ageSignUp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:background="@drawable/rounded_corner"
+        android:fontFamily="@font/nunito_bold"
+        android:hint="Age"
+        android:inputType="number"
+        android:padding="12dp"
+        android:textColor="@color/beyazimsi"
+        android:textColorHint="@color/beyazimsi"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/emailSignUp" />
+
+    <EditText
         android:id="@+id/passwordSignUp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
         android:fontFamily="@font/nunito_bold"
@@ -111,14 +123,14 @@
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/emailSignUp" />
+        app:layout_constraintTop_toBottomOf="@id/ageSignUp" />
 
     <EditText
         android:id="@+id/confirmPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
         android:background="@drawable/rounded_corner"
         android:fontFamily="@font/nunito_bold"
@@ -137,7 +149,7 @@
         android:layout_width="0dp"
         android:layout_height="54dp"
         android:layout_marginStart="64dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="64dp"
         android:backgroundTint="@color/Shadowed_Earth_1"
         android:fontFamily="@font/nunito_bold"
@@ -151,4 +163,5 @@
         app:layout_constraintTop_toBottomOf="@id/confirmPassword"
         app:strokeColor="@color/Shadowed_Earth_5"
         app:strokeWidth="1dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

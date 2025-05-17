@@ -11,31 +11,52 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp" tools:context=".UserInfoFragment">
+        android:paddingBottom="24dp"
+        tools:context=".UserInfoFragment">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/profileImageView"
+            android:id="@+id/profileLottieView"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:lottie_rawRes="@raw/avatar_animation"
-            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/avatar_animation" app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp" android:contentDescription="@string/profile_picture_description" />
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/profile_picture_animation_description" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/actualProfileImageView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:layout_constraintTop_toTopOf="@id/profileLottieView"
+            app:layout_constraintBottom_toBottomOf="@id/profileLottieView"
+            app:layout_constraintStart_toStartOf="@id/profileLottieView"
+            app:layout_constraintEnd_toEndOf="@id/profileLottieView"
+            android:src="@drawable/person"
+            app:civ_border_width="2dp"
+            app:civ_border_color="?attr/colorPrimary"
+            android:visibility="gone"
+            android:contentDescription="@string/profile_picture_description" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonChangeProfilePic"
             style="@style/Widget.Material3.Button.TextButton.Icon"
-            android:layout_width="0dp" android:layout_height="54dp" android:text="@string/change_picture"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:text="@string/change_picture"
             android:textColor="?android:attr/textColorPrimary"
             app:icon="@drawable/ic_camera"
             app:iconTint="?android:attr/textColorPrimary"
-            android:fontFamily="@font/nunito_bold" android:textSize="16sp" app:cornerRadius="16dp" android:background="@drawable/rounded_background" app:layout_constraintTop_toBottomOf="@id/profileImageView"
-            app:layout_constraintStart_toStartOf="parent"
+            android:fontFamily="@font/nunito_bold"
+            android:textSize="16sp"
+            app:cornerRadius="16dp"
+            android:background="@drawable/rounded_background"
+            app:layout_constraintTop_toBottomOf="@id/profileLottieView" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="60dp" android:layout_marginEnd="68dp" android:layout_marginTop="8dp"/>
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            android:layout_marginTop="8dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilName"
@@ -47,14 +68,19 @@
             app:layout_constraintTop_toBottomOf="@id/buttonChangeProfilePic"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="64dp" android:layout_marginEnd="64dp"> <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:background="@drawable/user_info_round"
-            android:enabled="false"
-            android:padding="11dp" android:textSize="15sp" android:fontFamily="@font/nunito_bold" /> </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:background="@drawable/user_info_round"
+                android:enabled="false"
+                android:padding="11dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/nunito_bold" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
@@ -66,14 +92,19 @@
             app:layout_constraintTop_toBottomOf="@id/tilName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="64dp" android:layout_marginEnd="64dp"> <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:background="@drawable/user_info_round"
-            android:enabled="false"
-            android:padding="11dp" android:textSize="15sp" android:fontFamily="@font/nunito_bold" /> </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:background="@drawable/user_info_round"
+                android:enabled="false"
+                android:padding="11dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/nunito_bold" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilAge"
@@ -85,19 +116,25 @@
             app:layout_constraintTop_toBottomOf="@id/tilEmail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="64dp" android:layout_marginEnd="64dp"> <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:background="@drawable/user_info_round"
-            android:enabled="false"
-            android:padding="11dp" android:textSize="15sp" android:fontFamily="@font/nunito_bold" /> </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:background="@drawable/user_info_round"
+                android:enabled="false"
+                android:padding="11dp"
+                android:textSize="15sp"
+                android:fontFamily="@font/nunito_bold" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonEditProfile"
             android:layout_width="0dp"
-            android:layout_height="54dp" android:text="@string/edit_profile"
+            android:layout_height="54dp"
+            android:text="@string/edit_profile"
             app:icon="@drawable/ic_edit"
             android:textAllCaps="false"
             android:textSize="16sp"
@@ -105,34 +142,86 @@
             app:layout_constraintTop_toBottomOf="@id/tilAge"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="60dp" android:layout_marginEnd="68dp" app:cornerRadius="16dp" app:backgroundTint="?attr/customButtonBackgroundColor"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            app:cornerRadius="16dp"
+            app:backgroundTint="?attr/customButtonBackgroundColor"
             android:textColor="?attr/customButtonTextColor"
             app:iconTint="?attr/customButtonTextColor"
-            android:fontFamily="@font/nunito_bold" /> <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonSaveChanges"
-        android:layout_width="0dp"
-        android:layout_height="54dp" android:text="@string/save_changes"
-        app:icon="@drawable/ic_save"
-        android:textAllCaps="false"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/buttonEditProfile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="60dp" android:layout_marginEnd="68dp" app:cornerRadius="16dp" android:fontFamily="@font/nunito_bold" /> <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonChangePassword"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="0dp"
-        android:layout_height="54dp" android:layout_marginTop="16dp"
-        android:text="@string/change_password"
-        android:textAllCaps="false"
-        android:textColor="?android:attr/textColorPrimary"
-        app:icon="@drawable/ic_lock"
-        app:iconTint="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/buttonSaveChanges"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="60dp" android:layout_marginEnd="68dp" app:cornerRadius="16dp" app:strokeColor="?android:attr/textColorPrimary" android:fontFamily="@font/nunito_bold" /> </androidx.constraintlayout.widget.ConstraintLayout>
+            android:fontFamily="@font/nunito_bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSaveChanges"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:text="@string/save_changes"
+            app:icon="@drawable/ic_save"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/buttonEditProfile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            app:cornerRadius="16dp"
+            android:fontFamily="@font/nunito_bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonCancelEdit"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:text="@string/cancel"
+            app:icon="@drawable/ic_cancel"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/buttonSaveChanges"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            app:cornerRadius="16dp"
+            android:textColor="?android:attr/textColorSecondary"
+            app:strokeColor="?android:attr/textColorSecondary"
+            android:fontFamily="@font/nunito_bold" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonChangePassword"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/change_password"
+            android:textAllCaps="false"
+            android:textColor="?android:attr/textColorPrimary"
+            app:icon="@drawable/ic_lock"
+            app:iconTint="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/buttonCancelEdit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            app:cornerRadius="16dp"
+            app:strokeColor="?android:attr/textColorPrimary"
+            android:fontFamily="@font/nunito_bold" />
+
+        <ProgressBar
+            android:id="@+id/progressBarUserInfo"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
