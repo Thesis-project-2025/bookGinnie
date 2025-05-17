@@ -149,6 +149,8 @@ class MainPageFragment : Fragment() {
     private var isSimilarTo2Loading = false
     private var originalBookTitle2: String? = null
 
+    private var currentSearchOperationJob: Job? = null // Aktif arama işlemini tutar
+    private var isLoading = false
 
     // --- Lifecycle ---
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,7 +172,6 @@ class MainPageFragment : Fragment() {
         setupBackPressHandler()
         setupRecyclerViews()
 
-        // Initial Data Loading
         loadTopRatedByCountBooks()
         loadHighRatedFictionBooks()
         loadHighRatedNonFictionBooks()
@@ -182,95 +183,86 @@ class MainPageFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         fragmentJob.cancel()
-        searchJob?.cancel()
+        currentSearchOperationJob?.cancel() // Güncellendi
     }
 
     // --- Setup Functions ---
-
     private fun selectRandomGenres() {
-        // Mevcut tür listesinden rastgele 3 tane seçer
         selectedRandomGenres = availableGenres.shuffled().take(3)
         Log.d("Genres", "Selected random genres: $selectedRandomGenres")
     }
 
+    // SEARCHFRAGMENT'TAN ALINAN VE UYARLANAN setupSearchView
     private fun setupSearchView() {
-        val searchView = binding.searchMainpage
-        // androidx.appcompat.R.id.search_src_text ID'sinin çalıştığından emin ol
+        val searchView = binding.searchMainpage // MainPage binding'i kullanılıyor
         val searchEditText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-
-        // Renkleri kendi projenin renkleriyle değiştir (colors.xml)
         try {
-            searchEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.beige)) // colors.xml'de beige rengi olmalı
+            searchEditText.setTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
             searchEditText.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.beige))
         } catch (e: Exception) {
-            Log.w("SetupSearch", "Color resources not found? Using default colors. ${e.message}")
+            Log.w("SetupSearch", "Color resources not found for search. ${e.message}")
         }
 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus && !isInSearchMode) {
                 switchToSearchMode()
-                Log.d("SearchMode", "Switched to search mode due to focus")
             }
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
-                searchJob?.cancel() // Önceki arama işini iptal et
+                currentSearchOperationJob?.cancel() // Mevcut aramayı iptal et
                 if (newText.isBlank()) {
-                    // Metin boşsa ve arama modundaysak sonuçları temizle
                     if (isInSearchMode) {
                         clearSearchResults()
-                        Log.d("SearchMode", "Search text cleared, results cleared.")
+                        Log.d("MainPageSearch", "Cleared search results on text change.")
                     }
                 } else {
-                    // Arama modunda değilsek geçiş yap
                     if (!isInSearchMode) {
                         switchToSearchMode()
                     }
-                    // Debounce ile arama yap (kullanıcı yazmayı bitirince)
-                    searchJob = uiScope.launch {
-                        delay(350) // 350ms bekle
-                        clearSearchResults() // Yeni aramadan önce temizle
-                        searchQuery = newText.trim()
-                        searchBooks(searchQuery!!) // Arama fonksiyonunu çağır
-                        Log.d("SearchMode", "Searching (debounced): $searchQuery")
+                    currentSearchOperationJob = uiScope.launch {
+                        delay(350) // Debounce
+                        if (isActive) { // Coroutine hala aktif mi kontrol et
+                            clearSearchResults()
+                            searchQuery = newText.trim() // Class seviyesindeki searchQuery'yi güncelle
+                            Log.d("MainPageSearch", "Debounced search starting for: $searchQuery")
+                            searchBooks(searchQuery!!) // searchBooks'u çağır
+                        }
                     }
                 }
                 return true
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                searchJob?.cancel() // Bekleyen arama işini iptal et
-                searchView.clearFocus() // Klavyeyi gizle
+                currentSearchOperationJob?.cancel() // Mevcut aramayı iptal et
+                searchView.clearFocus()
                 if (query.isNotBlank()) {
                     if (!isInSearchMode) {
                         switchToSearchMode()
                     }
-                    clearSearchResults() // Yeni aramadan önce temizle
-                    searchQuery = query.trim()
-                    uiScope.launch { // Submit işlemini de scope içinde yap
-                        searchBooks(searchQuery!!)
+                    clearSearchResults()
+                    searchQuery = query.trim() // Class seviyesindeki searchQuery'yi güncelle
+                    Log.d("MainPageSearch", "Submit search starting for: $searchQuery")
+                    currentSearchOperationJob = uiScope.launch {
+                        searchBooks(searchQuery!!) // searchBooks'u çağır
                     }
-                    Log.d("SearchMode", "Search submitted: $searchQuery")
                 }
                 return true
             }
         })
     }
 
-
     private fun setupBackPressHandler() {
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) { // enabled = true
+            object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (isInSearchMode) {
-                        // Arama modundaysa, kategori moduna dön
                         switchToCategoriesMode()
                     } else {
-                        // Arama modunda değilse, default davranışı etkinleştir ve geri git
-                        isEnabled = false // Callback'i devre dışı bırak
-                        requireActivity().onBackPressedDispatcher.onBackPressed() // Sistemin geri tuşu işlemini çağır
+                        isEnabled = false
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }
@@ -278,13 +270,13 @@ class MainPageFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        // --- Search Results RecyclerView (Vertical Staggered Grid) ---
+        // Search RV
         binding.bookRV.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        searchAdapter = BookAdapter(requireContext(), searchBookList, "main") // fragmentType="main"
+        searchAdapter = BookAdapter(requireContext(), searchBookList, "main") // fragmentType="main" MainPage için
         binding.bookRV.adapter = searchAdapter
-        setupSearchScrollListener() // Arama için kaydırma dinleyicisini ayarla
+        setupSearchScrollListener() // ARAMA İÇİN KAYDIRMA DİNLEYİCİSİ
 
-        // --- Category RecyclerViews (Horizontal Linear) ---
+        // Category RVs
         setupCategoryRecyclerView(binding.rvTopRatedByCountBooks)
         setupCategoryRecyclerView(binding.rvHighRatedFictionBooks)
         setupCategoryRecyclerView(binding.rvHighRatedNonFictionBooks)
@@ -295,21 +287,18 @@ class MainPageFragment : Fragment() {
         setupCategoryRecyclerView(binding.rvSimilarTo1)
         setupCategoryRecyclerView(binding.rvSimilarTo2)
 
-        // --- Initialize Adapters ---
-        // Firestore Kategorileri
+        // Initialize Adapters
         topRatedByCountAdapter = BookCategoryAdapter(requireContext(), topRatedByCountBooks) { loadTopRatedByCountBooks() }
         highRatedFictionAdapter = BookCategoryAdapter(requireContext(), highRatedFictionBooks) { loadHighRatedFictionBooks() }
         highRatedNonFictionAdapter = BookCategoryAdapter(requireContext(), highRatedNonFictionBooks) { loadHighRatedNonFictionBooks() }
-        // Random Türler
         randomGenre1Adapter = BookCategoryAdapter(requireContext(), randomGenre1Books) { if (selectedRandomGenres.isNotEmpty()) loadRandomGenreBooks(0) }
         randomGenre2Adapter = BookCategoryAdapter(requireContext(), randomGenre2Books) { if (selectedRandomGenres.size > 1) loadRandomGenreBooks(1) }
         randomGenre3Adapter = BookCategoryAdapter(requireContext(), randomGenre3Books) { if (selectedRandomGenres.size > 2) loadRandomGenreBooks(2) }
-        // API Bazlı
-        forYouAdapter = BookCategoryAdapter(requireContext(), forYouBooks) { /* onLoadMore boş */ }
-        similarTo1Adapter = BookCategoryAdapter(requireContext(), similarTo1Books) { /* onLoadMore boş */ }
-        similarTo2Adapter = BookCategoryAdapter(requireContext(), similarTo2Books) { /* onLoadMore boş */ }
+        forYouAdapter = BookCategoryAdapter(requireContext(), forYouBooks) {}
+        similarTo1Adapter = BookCategoryAdapter(requireContext(), similarTo1Books) {}
+        similarTo2Adapter = BookCategoryAdapter(requireContext(), similarTo2Books) {}
 
-        // --- Set Adapters ---
+        // Set Adapters
         binding.rvTopRatedByCountBooks.adapter = topRatedByCountAdapter
         binding.rvHighRatedFictionBooks.adapter = highRatedFictionAdapter
         binding.rvHighRatedNonFictionBooks.adapter = highRatedNonFictionAdapter
@@ -320,21 +309,14 @@ class MainPageFragment : Fragment() {
         binding.rvSimilarTo1.adapter = similarTo1Adapter
         binding.rvSimilarTo2.adapter = similarTo2Adapter
 
-        // --- Update Titles/Visibility for Random Genres ---
-        updateRandomGenreViews() // Helper fonksiyon çağrısı
+        updateRandomGenreViews()
 
-        // --- Initially Hide API-driven sections ---
         hideSection(binding.tvForYou, binding.rvForYou)
         hideSection(binding.tvSimilarTo1, binding.rvSimilarTo1)
         hideSection(binding.tvSimilarTo2, binding.rvSimilarTo2)
-        // Diğer similar bölümler eklenirse onlar da gizlenmeli
     }
 
-    // Helper to update Random Genre Views after selection
     private fun updateRandomGenreViews(){
-        // Adapterların initialize edildiğini kontrol etmek iyi bir pratik olabilir
-        if (!::randomGenre1Adapter.isInitialized || !::randomGenre2Adapter.isInitialized || !::randomGenre3Adapter.isInitialized) return
-
         binding.tvRandomGenre1.visibility = if (selectedRandomGenres.isNotEmpty()) View.VISIBLE else View.GONE
         binding.rvRandomGenre1.visibility = if (selectedRandomGenres.isNotEmpty()) View.VISIBLE else View.GONE
         if (selectedRandomGenres.isNotEmpty()) binding.tvRandomGenre1.text = "Best ${selectedRandomGenres[0]} Books"
@@ -348,36 +330,36 @@ class MainPageFragment : Fragment() {
         if (selectedRandomGenres.size > 2) binding.tvRandomGenre3.text = "Best ${selectedRandomGenres[2]} Books"
     }
 
-
-    // Helper to setup layout manager for horizontal category lists
     private fun setupCategoryRecyclerView(recyclerView: RecyclerView) {
-        // Context null kontrolü eklemek daha güvenli olabilir (fragment detach olmuşsa)
         context?.let { ctx ->
             recyclerView.layoutManager = LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
-
+    // SEARCHFRAGMENT'TAN ALINAN setupSearchScrollListener
     private fun setupSearchScrollListener() {
         binding.bookRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                // Sadece aşağı kaydırırken ve arama modundayken çalış
-                if (dy > 0 && isInSearchMode) {
-                    val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
-                    val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
-                    // Pozisyon dizisindeki en büyük değeri bul
-                    val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
-                    val totalItemCount = layoutManager.itemCount
+                if (dy <= 0 || !isInSearchMode) return // Sadece aşağı kaydırırken ve arama modunda
 
-                    // Listenin sonuna yaklaşıldığında ve yükleme yapılmıyorsa
-                    // (Threshold: Son elemana `booksPerPage` kadar mesafe kalınca)
-                    if (!isSearchLoading && !isSearchLastPage && lastVisibleItem >= totalItemCount - booksPerPage ) {
-                        Log.d("SearchScroll", "Reached end of search results (approx.), loading more...")
-                        searchQuery?.let { query ->
-                            // Coroutine içinde başlat
-                            uiScope.launch { searchBooks(query) }
-                        }
+                val layoutManager = recyclerView.layoutManager as StaggeredGridLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null)
+                val lastVisibleItem = lastVisibleItemPositions.maxOrNull() ?: 0
+
+                // Son elemana 'booksPerPage' kadar mesafe kalınca veya daha azsa yükle
+                if (!isSearchLoading && !isSearchLastPage && totalItemCount > 0 &&
+                    lastVisibleItem >= totalItemCount - booksPerPage
+                ) {
+                    searchQuery?.let { currentQuery -> // Global searchQuery'yi kullan
+                        Log.d("MainPageSearchScroll", "Loading more search results for: $currentQuery")
+                        // searchBooks zaten CoroutineScope içinde değil, bu yüzden burada launch etmeye gerek yok
+                        // direkt çağırabiliriz, kendi içinde asenkron listener'ları var.
+                        // Ancak, UI güncellemeleri ana thread'de olmalı, searchBooks bunu zaten yapıyor.
+                        // Eğer searchBooks'u suspend yaptıysak uiScope.launch gerekir.
+                        // Mevcut searchBooks (SearchFragment'tan gelen) suspend değil.
+                        searchBooks(currentQuery)
                     }
                 }
             }
@@ -390,199 +372,126 @@ class MainPageFragment : Fragment() {
         textView.visibility = View.VISIBLE
         recyclerView.visibility = View.VISIBLE
     }
-
     private fun hideSection(textView: TextView, recyclerView: RecyclerView) {
         textView.visibility = View.GONE
         recyclerView.visibility = View.GONE
     }
 
-
-    // --- Category Data Loading Functions (Firestore) ---
-
+    // --- Data Loading: Firestore Categories ---
     private fun loadTopRatedByCountBooks() {
         if (isTopRatedByCountLoading || !::topRatedByCountAdapter.isInitialized) return
         isTopRatedByCountLoading = true
-        Log.d("FirestoreLoad", "Loading Top Rated (by count)... LastVisible: ${lastVisibleTopRatedByCount?.id}")
-
+        // ... (Geri kalan implementasyon önceki tam koddaki gibi)
         var query = firestore.collection("books_data")
             .orderBy("rating_count", Query.Direction.DESCENDING)
             .limit(booksPerPage.toLong())
-
         lastVisibleTopRatedByCount?.let { query = query.startAfter(it) }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    lastVisibleTopRatedByCount = documents.documents.last()
-                    val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
-                    if (newBooks.isNotEmpty()) {
-                        val startPosition = topRatedByCountBooks.size
-                        topRatedByCountBooks.addAll(newBooks)
-                        topRatedByCountAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
-                        Log.d("FirestoreLoad", "Loaded ${newBooks.size} Top Rated (by count) books.")
-                    }
-                } else {
-                    Log.d("FirestoreLoad", "No more Top Rated (by count) books found.")
+        query.get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                lastVisibleTopRatedByCount = documents.documents.last()
+                val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
+                if (newBooks.isNotEmpty()) {
+                    val startPosition = topRatedByCountBooks.size
+                    topRatedByCountBooks.addAll(newBooks)
+                    topRatedByCountAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
                 }
-                isTopRatedByCountLoading = false
             }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error loading top rated (by count) books: ${exception.message}", exception)
-                isTopRatedByCountLoading = false
-            }
+            isTopRatedByCountLoading = false
+        }.addOnFailureListener { e -> Log.e("Firestore", "Error loadTopRated: ${e.message}"); isTopRatedByCountLoading = false }
     }
 
     private fun loadHighRatedFictionBooks() {
         if (isHighRatedFictionLoading || !::highRatedFictionAdapter.isInitialized) return
         isHighRatedFictionLoading = true
-        Log.d("FirestoreLoad", "Loading High-Rated Fiction... LastVisible: ${lastVisibleHighRatedFiction?.id}")
-
+        // ... (Geri kalan implementasyon önceki tam koddaki gibi)
         var query = firestore.collection("books_data")
             .whereGreaterThan("average_rating", 4.0)
             .whereArrayContains("genres", "Fiction")
             .orderBy("average_rating", Query.Direction.DESCENDING)
             .limit(booksPerPage.toLong())
-
         lastVisibleHighRatedFiction?.let { query = query.startAfter(it) }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    lastVisibleHighRatedFiction = documents.documents.last()
-                    val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
-                    if (newBooks.isNotEmpty()) {
-                        val startPosition = highRatedFictionBooks.size
-                        highRatedFictionBooks.addAll(newBooks)
-                        highRatedFictionAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
-                        Log.d("FirestoreLoad", "Loaded ${newBooks.size} High-Rated Fiction books.")
-                    }
-                } else {
-                    Log.d("FirestoreLoad", "No more High-Rated Fiction books found.")
+        query.get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                lastVisibleHighRatedFiction = documents.documents.last()
+                val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
+                if (newBooks.isNotEmpty()) {
+                    val startPosition = highRatedFictionBooks.size
+                    highRatedFictionBooks.addAll(newBooks)
+                    highRatedFictionAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
                 }
-                isHighRatedFictionLoading = false
             }
-            .addOnFailureListener { exception ->
-                // Index hatası gelirse sadece logla, çökmeyi engelle
-                Log.e("Firestore", "Error loading High-Rated Fiction books: ${exception.message}", exception)
-                isHighRatedFictionLoading = false
-            }
+            isHighRatedFictionLoading = false
+        }.addOnFailureListener { e -> Log.e("Firestore", "Error loadFiction: ${e.message}"); isHighRatedFictionLoading = false }
     }
 
     private fun loadHighRatedNonFictionBooks() {
         if (isHighRatedNonFictionLoading || !::highRatedNonFictionAdapter.isInitialized) return
         isHighRatedNonFictionLoading = true
-        Log.d("FirestoreLoad", "Loading High-Rated NonFiction... LastVisible: ${lastVisibleHighRatedNonFiction?.id}")
-
+        // ... (Geri kalan implementasyon önceki tam koddaki gibi)
         var query = firestore.collection("books_data")
             .whereGreaterThan("average_rating", 4.0)
             .whereArrayContains("genres", "Nonfiction")
             .orderBy("average_rating", Query.Direction.DESCENDING)
             .limit(booksPerPage.toLong())
-
         lastVisibleHighRatedNonFiction?.let { query = query.startAfter(it) }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    lastVisibleHighRatedNonFiction = documents.documents.last()
-                    val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
-                    if (newBooks.isNotEmpty()) {
-                        val startPosition = highRatedNonFictionBooks.size
-                        highRatedNonFictionBooks.addAll(newBooks)
-                        highRatedNonFictionAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
-                        Log.d("FirestoreLoad", "Loaded ${newBooks.size} High-Rated NonFiction books.")
-                    }
-                } else {
-                    Log.d("FirestoreLoad", "No more High-Rated NonFiction books found.")
+        query.get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                lastVisibleHighRatedNonFiction = documents.documents.last()
+                val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
+                if (newBooks.isNotEmpty()) {
+                    val startPosition = highRatedNonFictionBooks.size
+                    highRatedNonFictionBooks.addAll(newBooks)
+                    highRatedNonFictionAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
                 }
-                isHighRatedNonFictionLoading = false
             }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error loading High-Rated NonFiction books: ${exception.message}", exception)
-                isHighRatedNonFictionLoading = false
-            }
+            isHighRatedNonFictionLoading = false
+        }.addOnFailureListener { e -> Log.e("Firestore", "Error loadNonFiction: ${e.message}"); isHighRatedNonFictionLoading = false }
     }
 
-    // Random Genre Sections Ana Başlatıcı
     private fun loadRandomGenreSections() {
         if (selectedRandomGenres.isNotEmpty()) loadRandomGenreBooks(0)
         if (selectedRandomGenres.size > 1) loadRandomGenreBooks(1)
         if (selectedRandomGenres.size > 2) loadRandomGenreBooks(2)
     }
 
-    // Random Genre yükleme fonksiyonu (index'e göre)
     private fun loadRandomGenreBooks(genreIndex: Int) {
-        if (genreIndex < 0 || genreIndex >= selectedRandomGenres.size) {
-            Log.w("FirestoreLoad", "Invalid genreIndex for random load: $genreIndex")
-            return
-        }
-
+        if (genreIndex < 0 || genreIndex >= selectedRandomGenres.size) return
         val genre = selectedRandomGenres[genreIndex]
-        val adapter: BookCategoryAdapter? // Nullable yapalım
+        val adapter: BookCategoryAdapter?
         val bookList: ArrayList<Books>
-        var lastVisible: DocumentSnapshot?
-        val isLoading = getLoadingFlag(genreIndex) // Önce bayrağı oku
+        var lastVisibleDoc: DocumentSnapshot?
+        val isLoadingFlag = getLoadingFlag(genreIndex)
 
-        if (isLoading) {
-            Log.d("FirestoreLoad", "Genre $genre (Index $genreIndex) is already loading.")
-            return
-        }
+        if (isLoadingFlag) return
 
-        // Adapter'ı ve ilgili state'i al
         when (genreIndex) {
-            0 -> {
-                if (!::randomGenre1Adapter.isInitialized) return
-                adapter = randomGenre1Adapter
-                bookList = randomGenre1Books
-                lastVisible = lastVisibleRandomGenre1
-            }
-            1 -> {
-                if (!::randomGenre2Adapter.isInitialized) return
-                adapter = randomGenre2Adapter
-                bookList = randomGenre2Books
-                lastVisible = lastVisibleRandomGenre2
-            }
-            2 -> {
-                if (!::randomGenre3Adapter.isInitialized) return
-                adapter = randomGenre3Adapter
-                bookList = randomGenre3Books
-                lastVisible = lastVisibleRandomGenre3
-            }
-            else -> return // Geçersiz index
+            0 -> { adapter = if(::randomGenre1Adapter.isInitialized) randomGenre1Adapter else null; bookList = randomGenre1Books; lastVisibleDoc = lastVisibleRandomGenre1 }
+            1 -> { adapter = if(::randomGenre2Adapter.isInitialized) randomGenre2Adapter else null; bookList = randomGenre2Books; lastVisibleDoc = lastVisibleRandomGenre2 }
+            2 -> { adapter = if(::randomGenre3Adapter.isInitialized) randomGenre3Adapter else null; bookList = randomGenre3Books; lastVisibleDoc = lastVisibleRandomGenre3 }
+            else -> return
         }
+        if (adapter == null) { setLoadingFlag(genreIndex, false); return }
 
-        setLoadingFlag(genreIndex, true) // Yüklemeyi başlat
-        Log.d("FirestoreLoad", "Loading Random Genre '$genre' (Index $genreIndex)... LastVisible: ${lastVisible?.id}")
-
+        setLoadingFlag(genreIndex, true)
+        // ... (Geri kalan implementasyon önceki tam koddaki gibi)
         var query = firestore.collection("books_data")
             .whereArrayContains("genres", genre)
-            .orderBy("average_rating", Query.Direction.DESCENDING) // Örnek sıralama
+            .orderBy("average_rating", Query.Direction.DESCENDING)
             .limit(booksPerPage.toLong())
-
-        lastVisible?.let { query = query.startAfter(it) }
-
-        query.get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    setLastVisible(genreIndex, documents.documents.last()) // Helper ile lastVisible'ı güncelle
-                    val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
-                    if (newBooks.isNotEmpty()) {
-                        val startPosition = bookList.size
-                        bookList.addAll(newBooks)
-                        adapter?.notifyItemRangeInserted(startPosition, newBooks.size) // Null check
-                        Log.d("FirestoreLoad", "Loaded ${newBooks.size} books for genre '$genre'. Total: ${bookList.size}")
-                    }
-                } else {
-                    Log.d("FirestoreLoad", "No more books found for genre '$genre'.")
+        lastVisibleDoc?.let { query = query.startAfter(it) }
+        query.get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                setLastVisible(genreIndex, documents.documents.last())
+                val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
+                if (newBooks.isNotEmpty()) {
+                    val startPosition = bookList.size
+                    bookList.addAll(newBooks)
+                    adapter.notifyItemRangeInserted(startPosition, newBooks.size)
                 }
-                setLoadingFlag(genreIndex, false) // Helper ile bayrağı sıfırla
             }
-            .addOnFailureListener { exception ->
-                Log.e("Firestore", "Error loading books for genre '$genre': ${exception.message}", exception)
-                setLoadingFlag(genreIndex, false) // Helper ile bayrağı sıfırla
-            }
+            setLoadingFlag(genreIndex, false)
+        }.addOnFailureListener { e -> Log.e("Firestore", "Error loadRandomGenre $genre: ${e.message}"); setLoadingFlag(genreIndex, false) }
     }
-
     // --- Helper functions for Random Genre State ---
     // Belirtilen index için yükleme bayrağını döndürür
     private fun getLoadingFlag(index: Int): Boolean {
@@ -624,107 +533,107 @@ class MainPageFragment : Fragment() {
     }
 
 
-    // --- "For You" Recommendations (Cache First Logic - For Döngüsü ile ID Çıkarma) ---
+    // --- "For You" Recommendations (Cache First Logic - 10 Rating Barajı Eklendi) ---
     private fun loadForYouRecommendations() {
         if (!::forYouAdapter.isInitialized) {
-            Log.w("ForYou", "Adapter not initialized yet.")
+            Log.w("ForYou", "Adapter not initialized for 'For You'.")
             return
         }
         if (isForYouLoading) return
         val userId = auth.currentUser?.uid ?: run {
-            Log.w("ForYou", "User not logged in.")
+            Log.w("ForYou", "User not logged in for 'For You'.")
             hideSection(binding.tvForYou, binding.rvForYou)
             return
         }
 
         isForYouLoading = true
-        Log.d("ForYou", "Loading 'For You' recommendations for user $userId...")
-        hideSection(binding.tvForYou, binding.rvForYou)
+        Log.d("ForYou", "Starting 'For You' recommendations for user $userId...")
+        // Önceki verileri temizle ve UI'ı başlangıç durumuna getir
         forYouBooks.clear()
-        forYouAdapter.notifyDataSetChanged()
+        if (::forYouAdapter.isInitialized) { // Adapter'ın başlatıldığından emin ol
+            forYouAdapter.notifyDataSetChanged()
+        }
+        hideSection(binding.tvForYou, binding.rvForYou)
 
         uiScope.launch {
-            var bookIdsToLoad: List<Long>? = null // ID'ler Long olacak
+            var bookIdsToLoad: List<Long>? = null
             var triggerApi = false
 
             try {
-                // Step 1: Check Cache
+                // --- YENİ ADIM: Kullanıcının Toplam Rating Sayısını Kontrol Et ---
+                val currentTotalRatingCount = getRatingCount(userId) // Artık tek parametre
+                Log.d("ForYouLogic", "User $userId current total rating count: $currentTotalRatingCount")
+
+                if (currentTotalRatingCount < 10) {
+                    Log.d("ForYouLogic", "User has less than 10 ratings ($currentTotalRatingCount). 'For You' recommendations skipped.")
+                    isForYouLoading = false
+                    // hideSection zaten çağrıldı, burada tekrar gerek yok.
+                    return@launch // Coroutine'dan çık, başka işlem yapma
+                }
+                // --- YENİ ADIM SONU ---
+
+                // Kullanıcının en az 10 rating'i var, önbellek/API mantığına devam et
+                Log.d("ForYouLogic", "User has >= 10 ratings. Proceeding with cache/API logic.")
                 val cacheRef = firestore.collection("user_recommendations").document(userId)
                 val cacheSnapshot = cacheRef.get().await()
-                val cachedData = try { cacheSnapshot.toObject<UserRecommendations>() } catch(e:Exception){ null }
+                val cachedData = try { cacheSnapshot.toObject<UserRecommendations>() } catch (e: Exception) {
+                    Log.e("ForYouCache", "Error converting 'user_recommendations' snapshot: ${e.message}")
+                    null
+                }
 
-                // Step 2: Check conditions for API call
                 if (cachedData == null || cachedData.recommendations.isNullOrEmpty()) {
-                    Log.d("ForYouLogic", "Cache miss (no data or empty recommendations). Triggering API.")
+                    Log.d("ForYouLogic", "Cache miss for user with >=10 ratings. Triggering API.")
                     triggerApi = true
                 } else {
-                    val cacheTimestamp = cachedData.timestamp?.seconds ?: 0L
-                    val isStale = (Timestamp.now().seconds - cacheTimestamp) > TimeUnit.DAYS.toSeconds(1)
+                    // Önbellek var, geçerliliğini kontrol et
+                    val isStale: Boolean
+                    val cacheTimestampObject: Timestamp? = cachedData.timestamp
+                    if (cacheTimestampObject == null) {
+                        Log.d("ForYouLogic", "Cache timestamp is null. Considering stale.")
+                        isStale = true
+                    } else {
+                        val cacheTimeMillis = cacheTimestampObject.toDate().time
+                        val currentTimeMillis = Timestamp.now().toDate().time
+                        val oneDayInMillis = TimeUnit.DAYS.toMillis(1)
+                        isStale = (currentTimeMillis - cacheTimeMillis) > oneDayInMillis
+                    }
 
                     if (isStale) {
-                        Log.d("ForYouLogic", "Cache is stale. Triggering API.")
+                        Log.d("ForYouLogic", "Cache is stale for user with >=10 ratings. Triggering API.")
                         triggerApi = true
                     } else {
-                        val currentRatingCount = getRatingCount(userId, cachedData.rated_books_count ?: 0)
-                        if (currentRatingCount < 0) {
-                            Log.w("ForYouLogic", "Could not get current rating count. Loading from potentially inaccurate cache.")
-                            // ** === ID ÇIKARMA (For Döngüsü) === **
+                        // Önbellek taze, `rated_books_count` farkını kontrol et
+                        // currentTotalRatingCount zaten yukarıda alındı.
+                        val cachedRatedBooksCount = cachedData.rated_books_count ?: 0
+                        if (currentTotalRatingCount >= cachedRatedBooksCount + 5) {
+                            Log.d("ForYouLogic", "Rating count discrepancy ($currentTotalRatingCount vs $cachedRatedBooksCount) for user with >=10 ratings. Triggering API.")
+                            triggerApi = true
+                        } else {
+                            Log.d("ForYouLogic", "Cache is valid and up-to-date for user with >=10 ratings. Loading from cache.")
                             val recommendationsList = cachedData.recommendations
                             val extractedIds = mutableListOf<Long>()
-                            if (recommendationsList != null) {
-                                for (entry in recommendationsList) {
-                                    entry.book_id?.let { id -> extractedIds.add(id) }
-                                }
-                            }
+                            recommendationsList?.forEach { entry -> entry.book_id?.let { extractedIds.add(it) } }
                             bookIdsToLoad = if (extractedIds.isNotEmpty()) extractedIds else null
-                            // ** =============================== **
-                        } else {
-                            val cachedCount = cachedData.rated_books_count ?: 0
-                            val isCountDiscrepancy = currentRatingCount >= cachedCount + 5
-                            if (isCountDiscrepancy) {
-                                Log.d("ForYouLogic", "Rating count discrepancy ($currentRatingCount vs $cachedCount). Triggering API.")
-                                triggerApi = true
-                            } else {
-                                Log.d("ForYouLogic", "Cache is valid. Loading from cache.")
-                                // ** === ID ÇIKARMA (For Döngüsü) === **
-                                val recommendationsList = cachedData.recommendations
-                                val extractedIds = mutableListOf<Long>()
-                                if (recommendationsList != null) {
-                                    for (entry in recommendationsList) {
-                                        entry.book_id?.let { id -> extractedIds.add(id) }
-                                    }
-                                }
-                                bookIdsToLoad = if (extractedIds.isNotEmpty()) extractedIds else null
-                                // ** =============================== **
-                            }
                         }
                     }
                 }
 
-                // Step 3: Trigger API if needed
                 if (triggerApi) {
-                    Log.d("ForYouAPI", "Triggering /recommend-by-genre API for user $userId...")
+                    Log.d("ForYouAPI", "Triggering /recommend-by-genre API for user $userId (has $currentTotalRatingCount ratings)...")
                     try {
                         withContext(Dispatchers.IO) { RetrofitInstance.api.getRecommendationsByGenre(userId) }
                         Log.d("ForYouAPI", "API triggered. Waiting briefly for Firestore update...")
-                        delay(3000)
+                        delay(3000) // Backend'in Firestore'u güncellemesi için bekleme süresi
 
-                        // Step 4a: Read Firestore AGAIN
                         val updatedSnapshot = cacheRef.get().await()
-                        val updatedCacheData = try { updatedSnapshot.toObject<UserRecommendations>() } catch(e:Exception){ null }
+                        val updatedCacheData = try { updatedSnapshot.toObject<UserRecommendations>() } catch (e: Exception) { null }
 
                         if (updatedCacheData?.recommendations != null && updatedCacheData.recommendations.isNotEmpty()) {
                             Log.d("ForYouLogic", "Loading recommendations from Firestore after API trigger.")
-                            // ** === ID ÇIKARMA (For Döngüsü) === **
                             val recommendationsList = updatedCacheData.recommendations
                             val extractedIds = mutableListOf<Long>()
-                            if (recommendationsList != null) {
-                                for (entry in recommendationsList) {
-                                    entry.book_id?.let { id -> extractedIds.add(id) }
-                                }
-                            }
+                            recommendationsList.forEach { entry -> entry.book_id?.let { extractedIds.add(it) } }
                             bookIdsToLoad = if (extractedIds.isNotEmpty()) extractedIds else null
-                            // ** =============================== **
                         } else {
                             Log.w("ForYouLogic", "Firestore cache still empty or invalid after API trigger and delay.")
                             bookIdsToLoad = null
@@ -735,7 +644,6 @@ class MainPageFragment : Fragment() {
                     }
                 }
 
-                // Step 5: Load book details if IDs were found
                 if (!bookIdsToLoad.isNullOrEmpty()) {
                     fetchBookDetailsByIds(
                         bookIds = bookIdsToLoad.map { it.toInt() },
@@ -743,36 +651,36 @@ class MainPageFragment : Fragment() {
                         targetAdapter = forYouAdapter,
                         targetTextView = binding.tvForYou,
                         targetRecyclerView = binding.rvForYou,
-                        sectionTitle = "For You",
+                        sectionTitle = "For You", // Başlığı doğru ayarla
                         setLoadingFlag = { isForYouLoading = it }
                     )
                 } else {
-                    Log.w("ForYouLogic", "No valid book IDs found to load details.")
+                    Log.w("ForYouLogic", "No valid book IDs found to load details for 'For You'.")
                     isForYouLoading = false
-                    hideSection(binding.tvForYou, binding.rvForYou)
+                    hideSection(binding.tvForYou, binding.rvForYou) // ID yoksa bölümü gizle
                 }
 
             } catch (e: Exception) {
                 Log.e("ForYou", "Error in loadForYouRecommendations flow: ${e.message}", e)
                 isForYouLoading = false
-                hideSection(binding.tvForYou, binding.rvForYou)
+                hideSection(binding.tvForYou, binding.rvForYou) // Hata durumunda gizle
             }
         }
     }
 
-    // Helper to get current rating count from Firestore using count() aggregation
-    private suspend fun getRatingCount(userId: String, minimumExpected: Long): Long {
+    // Helper to get current total rating count from Firestore using count() aggregation
+    private suspend fun getRatingCount(userId: String): Long { // minimumExpected parametresi kaldırıldı
         return try {
-            // Sorguyu optimize etmek için limit ekle (en az beklenen + fark kadar)
             val countQuery = firestore.collection("user_ratings")
-                .whereEqualTo("userId", userId) // Alan adını kontrol et
-                .limit(minimumExpected + 5) // Daha fazla saymaya gerek yok
-                .count() // count() aggregation kullan
-                .get(com.google.firebase.firestore.AggregateSource.SERVER) // Sunucudan sayımı al
-                .await() // Coroutine ile bekle
+                .whereEqualTo("userId", userId) // Firestore'daki alan adının "userId" olduğundan emin ol!
+                // .limit() KULLANILMIYOR, çünkü toplam sayıyı istiyoruz
+                .count()
+                .get(com.google.firebase.firestore.AggregateSource.SERVER)
+                .await()
+            Log.d("RatingCount", "Fetched rating count for user $userId: ${countQuery.count}")
             countQuery.count
         } catch (e: Exception) {
-            Log.e("RatingCount", "Error getting rating count for user $userId: ${e.message}")
+            Log.e("RatingCount", "Error getting rating count for user $userId: ${e.message}", e)
             -1L // Hata durumunda -1 döndür (kontrol için)
         }
     }
@@ -1133,117 +1041,137 @@ class MainPageFragment : Fragment() {
     }
 
 
-    // --- Search Functions ---
+    // --- Search Functions (SearchFragment'tan alınan ve MainPageFragment'a uyarlanan) ---
     private fun switchToSearchMode() {
         if (!isInSearchMode) {
             isInSearchMode = true
-            binding.scrollViewCategories.visibility = View.GONE
-            binding.bookRV.visibility = View.VISIBLE
-            //binding.fabButton.visibility = View.GONE // FAB'ı gizle
-            Log.d("SearchMode", "Switched to search mode VIEW")
+            binding.scrollViewCategories.visibility = View.GONE // Kategorileri gizle
+            binding.bookRV.visibility = View.VISIBLE       // Arama sonuçlarını göster             // FAB'ı gizle
+            Log.d("MainPageSearch", "Switched to search mode")
         }
     }
 
     private fun switchToCategoriesMode() {
         if (isInSearchMode) {
             isInSearchMode = false
-            searchQuery = null // Arama sorgusunu temizle
+            searchQuery = null // Aktif aramayı temizle
             binding.searchMainpage.setQuery("", false) // SearchView içini temizle
-            binding.searchMainpage.clearFocus() // Klavyeyi gizle
-            binding.scrollViewCategories.visibility = View.VISIBLE
-            binding.bookRV.visibility = View.GONE
-            //binding.fabButton.visibility = View.VISIBLE // FAB'ı göster
-            clearSearchResults() // Arama sonuçlarını temizle
-            Log.d("SearchMode", "Switched to categories mode VIEW")
+            binding.searchMainpage.clearFocus()       // Focus'u kaldır
+
+            binding.scrollViewCategories.visibility = View.VISIBLE // Kategorileri göster
+            binding.bookRV.visibility = View.GONE          // Arama sonuçlarını gizle
+            clearSearchResults() // Mod değiştirince sonuçları temizle
+            Log.d("MainPageSearch", "Switched to categories mode")
         }
     }
 
+    // SearchFragment'tan alınan clearSearchResults
     private fun clearSearchResults() {
         if (searchBookList.isNotEmpty()) {
-            val size = searchBookList.size
+            val previousSize = searchBookList.size
             searchBookList.clear()
-            // Adapter başlatıldıysa güncelle
-            if(::searchAdapter.isInitialized) {
-                searchAdapter.notifyItemRangeRemoved(0, size)
+            if (::searchAdapter.isInitialized) {
+                searchAdapter.notifyItemRangeRemoved(0, previousSize)
             }
         }
-        lastVisibleSearchDocument = null // Sayfalamayı sıfırla
-        isSearchLastPage = false // Son sayfa bayrağını sıfırla
-        Log.d("SearchMode", "Search results cleared.")
+        lastVisibleSearchDocument = null
+        isSearchLastPage = false
+        Log.d("MainPageSearch", "Search results cleared.")
     }
 
-
-    private suspend fun searchBooks(queryText: String) { // suspend fun yapıldı
-        if (isSearchLoading || isSearchLastPage) {
-            Log.d("Search", "Search aborted. Loading: $isSearchLoading, LastPage: $isSearchLastPage")
+    // MainPageFragment içinde
+    private fun searchBooks(query: String) { // Artık suspend değil, Firebase listener'ları kullanıyor
+        if (isSearchLoading) {
+            Log.d("MainPageSearch", "Already loading search results, skipping for: $query")
             return
         }
         isSearchLoading = true
-        // ProgressBar'ı Main thread'de göster
-        withContext(Dispatchers.Main) {
-            binding.progressBar.visibility = View.VISIBLE
+        // this.searchQuery zaten onQueryTextChange/Submit içinde ayarlandı, parametre 'query' kullanılmalı.
+
+        // lastVisibleSearchDocument null ise (yani yeni bir arama veya ilk sayfa),
+        // liste zaten clearSearchResults içinde temizleniyor.
+        // Tekrar temizlemeye gerek yok, clearSearchResults'ün çağrıldığından emin olalım.
+        // (Bu, setupSearchView içindeki onQueryTextChange ve onQueryTextSubmit'te yapılıyor.)
+
+        binding.progressBar.visibility = View.VISIBLE
+
+        val formattedQueryForFirestore = query.lowercase().trim() // Firestore sorgusu için
+        Log.d("MainPageSearch", "Searching (Firestore query) for: $formattedQueryForFirestore, lastVisible: ${lastVisibleSearchDocument?.id}")
+
+        var firestoreQuery: Query = firestore.collection("books_data")
+            .orderBy("title_lowercase") // title_lowercase alanına göre sırala (index gerekli)
+            .startAt(formattedQueryForFirestore)
+            .endAt(formattedQueryForFirestore + "\uf8ff") // Prefix eşleşmesi
+            .limit(booksPerPage.toLong()) // booksPerPage (örneğin 10)
+
+        lastVisibleSearchDocument?.let {
+            firestoreQuery = firestoreQuery.startAfter(it)
         }
-        Log.d("Search", "Executing search for: '$queryText', LastVisible: ${lastVisibleSearchDocument?.id}")
 
-        try {
-            val formattedQuery = queryText.lowercase().trim()
-            // title_lowercase alanına göre artan sırada arama (index gerekli)
-            var firestoreQuery: Query = firestore.collection("books_data")
-                .orderBy("title_lowercase")
-                .startAt(formattedQuery)
-                .endAt(formattedQuery + "\uf8ff") // Prefix eşleşmesi için
-                .limit(10L) // Sayfa başına sonuç limiti (ayarlanabilir)
+        firestoreQuery.get()
+            .addOnSuccessListener { documents ->
+                Log.d("SearchFunc", "Search success, Document count: ${documents.size()}") // Log eklendi
+                val newBooks = ArrayList<Books>()
+                val formattedQueryForFilter = query.lowercase().trim() // Filtre için de aynı formatlanmış sorgu
 
-            // Sayfalama için son görünen belgeyi kullan
-            lastVisibleSearchDocument?.let {
-                firestoreQuery = firestoreQuery.startAfter(it)
-                Log.d("Search", "Applying pagination using startAfter.")
-            }
+                if (!documents.isEmpty) {
+                    lastVisibleSearchDocument = documents.documents.last()
 
-            val documents = firestoreQuery.get().await() // Coroutine ile bekle
+                    for (document in documents) {
+                        val titleLowercase = document.getString("title_lowercase") ?: ""
 
-            // Sonuçları işlemek ve UI güncellemek için Main thread'e dön
-            withContext(Dispatchers.Main) {
-                binding.progressBar.visibility = View.GONE // ProgressBar'ı gizle
-                if (documents.isEmpty) {
-                    Log.d("Search", "Firestore returned no documents for '$formattedQuery'.")
-                    isSearchLastPage = true // Başka sonuç yok
-                    // Eğer liste zaten boşsa "Sonuç bulunamadı" mesajı gösterilebilir
-                    // if (searchBookList.isEmpty()) { showNoResultsMessage() }
-                } else {
-                    Log.d("Search", "Firestore returned ${documents.size()} documents.")
-                    lastVisibleSearchDocument = documents.documents.last() // Sonraki sayfa için sakla
-                    // Gelen belge sayısı limitten az ise son sayfadır
-                    isSearchLastPage = documents.size() < 10 // Limite göre kontrol et
+                        // --- İSTEMCİ TARAFLI FİLTRELEME (Test için basitleştirilmiş/loglu) ---
+                        // Orijinal katı filtre (yorumda):
+                        // if (formattedQueryForFilter.split(" ").all { word -> titleLowercase.contains(word) }) {
 
-                    // Belgeleri Books nesnesine çevir
-                    val newBooks = documents.mapNotNull { parseDocumentToBook(it) }
+                        // Geçici olarak daha basit bir filtre:
+                        // Sadece arama teriminin başlıkta herhangi bir yerde geçip geçmediğini kontrol et
+                        if (titleLowercase.contains(formattedQueryForFilter)) {
+                            parseDocumentToBook(document)?.let { book -> // Sağlam parser kullanılıyor
+                                newBooks.add(book)
+                                Log.d("MainPageSearch", "FİLTREYİ GEÇTİ & PARSE EDİLDİ: ${book.title} (orijinal başlık: $titleLowercase)")
+                            }
+                        } else {
+                            // Bu log, hangi kitapların neden filtrelendiğini gösterir
+                            Log.w("MainPageSearch", "FİLTRELENDİ: '$titleLowercase' -- arama: '$formattedQueryForFilter'")
+                        }
+                        // --- FİLTRELEME TESTİ SONU ---
+                    }
+
+                    Log.d("SearchFunc", "Client-side filter complete. newBooks.size = ${newBooks.size}")
+                    if (newBooks.isEmpty() && !documents.isEmpty) {
+                        Log.w("SearchFunc", "Firestore returned ${documents.size()} docs, but client filter removed all of them for query: '$formattedQueryForFilter'. First doc title_lowercase from Firestore: ${documents.documents[0].getString("title_lowercase")}")
+                    }
 
                     if (newBooks.isNotEmpty()) {
-                        // Adapter başlatıldıysa listeye ekle ve güncelle
-                        if(::searchAdapter.isInitialized) {
-                            val startPosition = searchBookList.size
-                            searchBookList.addAll(newBooks)
-                            searchAdapter.notifyItemRangeInserted(startPosition, newBooks.size)
+                        val currentSize = searchBookList.size
+                        searchBookList.addAll(newBooks)
+                        if (::searchAdapter.isInitialized) { // Adapter başlatıldı mı kontrolü
+                            searchAdapter.notifyItemRangeInserted(currentSize, newBooks.size)
                         }
-                        Log.d("Search", "Added ${newBooks.size} books. Total: ${searchBookList.size}. isSearchLastPage = $isSearchLastPage")
+                        isSearchLastPage = documents.size() < booksPerPage
                     } else {
-                        // Gelen belgeler parse edilemediyse veya filtreye takıldıysa
-                        Log.d("Search", "No books matched parseDocumentToBook after query.")
-                        isSearchLastPage = documents.size() < 10 // Yine de son sayfa olabilir
+                        // newBooks boşsa ama Firestore'dan doküman geldiyse, yine de son sayfa olmayabilir
+                        // Sadece Firestore'dan hiç doküman gelmediyse veya gelen < limit ise son sayfa olmalı
+                        isSearchLastPage = documents.size() < booksPerPage || documents.isEmpty
+                        if (documents.isEmpty) {
+                            Log.d("MainPageSearch", "No results from Firestore for '$formattedQueryForFilter' after pagination/filtering.")
+                        }
                     }
+                } else {
+                    Log.d("MainPageSearch", "No more results from Firestore for '$formattedQueryForFilter'")
+                    isSearchLastPage = true
                 }
-                isSearchLoading = false // Yükleme bitti
-            }
-        } catch (e: Exception) {
-            // Hata durumunda logla ve UI'ı güncelle
-            Log.e("Firestore", "Error searching books for '$queryText': ${e.message}", e)
-            withContext(Dispatchers.Main) {
-                binding.progressBar.visibility = View.GONE
+
                 isSearchLoading = false
-                // Hata mesajı gösterilebilir: showErrorToast("Arama sırasında hata oluştu.")
+                binding.progressBar.visibility = View.GONE
+                Log.d("SearchFunc", "ProgressBar hidden in success listener.") // Log eklendi
             }
-        }
+            .addOnFailureListener { exception ->
+                Log.e("MainPageSearch", "Error searching books: ${exception.message}", exception)
+                isSearchLoading = false
+                binding.progressBar.visibility = View.GONE
+            }
     }
 
     // --- Helper Functions ---

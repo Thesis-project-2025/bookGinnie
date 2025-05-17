@@ -10,22 +10,23 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.bookgenie.databinding.ActivityMainBinding
 import com.example.bookgenie.drawable.AnimatedGradientDrawable // Drawable importu
+import com.google.firebase.auth.FirebaseAuth // FirebaseAuth importu eklendi
+import androidx.navigation.NavOptions
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    private var animatedBackground: AnimatedGradientDrawable? = null // Drawable referansı
-    private var isAnimatedBgActiveForCurrentDest = false // Mevcut hedef için animasyon aktif mi?
+    private var animatedBackground: AnimatedGradientDrawable? = null
+    private var isAnimatedBgActiveForCurrentDest = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- Animasyonlu Arkaplan Kurulumu ---
         // Renkleri al (Onboarding'deki gibi)
-        val colorDayStart = ContextCompat.getColor(this, R.color.Shadowed_Earth_1) // Güncel renk ID'lerini kullan
+        val colorDayStart = ContextCompat.getColor(this, R.color.Shadowed_Earth_1)
         val colorDayEnd = ContextCompat.getColor(this, R.color.Shadowed_Earth_3)
         val colorNightStart = ContextCompat.getColor(this, R.color.Shadowed_Earth_6)
         val colorNightEnd = ContextCompat.getColor(this, R.color.Shadowed_Earth_2)
@@ -33,41 +34,53 @@ class MainActivity : AppCompatActivity() {
         animatedBackground = AnimatedGradientDrawable(
             colorDayStart, colorDayEnd,
             colorNightStart, colorNightEnd,
-            duration = 15000L // Süreyi ayarla
+            duration = 15000L
         )
-        // --- Bitti ---
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
+        // --- OTURUM KONTROLÜ ---
+        val auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            // Kullanıcı zaten giriş yapmış.
+            // Eğer şu anki ekran onboardingFragment ise, MainPageFragment'a yönlendir
+            // ve onboardingFragment'ı yığından temizle.
+            if (navController.currentDestination?.id == R.id.onboardingFragment) {
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.main_activity_nav, true) // Navigasyon grafiğinin başına kadar temizle
+                    .build()
+                navController.navigate(R.id.mainPageFragment, null, navOptions)
+            }
+        }
+        // --- OTURUM KONTROLÜ BİTTİ ---
+
+
         val bottomAppBar = binding.bottomAppBar
         val fab = binding.fab
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            // Hangi fragmentların animasyonlu arkaplanı kullanacağını belirle
             val shouldShowAnimatedBackground = when (destination.id) {
                 R.id.onboardingFragment,
                 R.id.logInFragment,
                 R.id.signUpFragment
-                -> true // Bu ID'lerde göster
-                else -> false // Diğerlerinde gösterme
+                -> true
+                else -> false
             }
 
-            isAnimatedBgActiveForCurrentDest = shouldShowAnimatedBackground // Durumu güncelle
+            isAnimatedBgActiveForCurrentDest = shouldShowAnimatedBackground
 
             if (shouldShowAnimatedBackground) {
-                binding.root.background = animatedBackground // Ana layout'a ata
-                animatedBackground?.startAnimation() // Animasyonu başlat
+                binding.root.background = animatedBackground
+                animatedBackground?.startAnimation()
             } else {
-                // Animasyonu durdur ve varsayılan statik arkaplanı ata
                 animatedBackground?.stopAnimation()
                 binding.root.setBackgroundColor(
-                    ContextCompat.getColor(this, R.color.Shadowed_Earth_1) // XML'deki varsayılan renk
+                    ContextCompat.getColor(this, R.color.Shadowed_Earth_1)
                 )
             }
 
-            // --- Bottom Bar ve FAB görünürlük kontrolü ---
             val shouldHideBottomBar = when (destination.id) {
                 R.id.onboardingFragment,
                 R.id.logInFragment,
@@ -81,22 +94,21 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (shouldHideBottomBar) {
-                if (bottomAppBar.visibility == View.VISIBLE) { // Sadece görünürse animasyon yap
-                    val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 150f // Makul bir varsayılan
+                if (bottomAppBar.visibility == View.VISIBLE) {
+                    val barHeight = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 150f
                     bottomAppBar.animate().translationY(barHeight).setDuration(200).withEndAction {
                         bottomAppBar.visibility = View.GONE
                     }.start()
                     fab.hide()
                 }
             } else {
-                if (bottomAppBar.visibility == View.GONE) { // Sadece gizliyse animasyon yap
+                if (bottomAppBar.visibility == View.GONE) {
                     bottomAppBar.visibility = View.VISIBLE
-                    bottomAppBar.translationY = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 150f // Başlangıç pozisyonu
+                    bottomAppBar.translationY = bottomAppBar.height.toFloat().takeIf { it > 0 } ?: 150f
                     bottomAppBar.animate().translationY(0f).setDuration(200).start()
                     fab.show()
                 }
             }
-            // --- Bitti ---
         }
 
         binding.bottomNavigationView.setupWithNavController(navController)
@@ -106,7 +118,6 @@ class MainActivity : AppCompatActivity() {
             navController.navigate(R.id.action_global_fairyFragment)
         }
 
-        // FAB Animasyonları (İsteğe bağlı)
         try {
             val bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
             binding.fab.startAnimation(bounceAnimation)
@@ -115,14 +126,10 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
-        // Başlangıç seçimi
-        // binding.bottomNavigationView.selectedItemId = R.id.idMainPage // NavController hallediyor olabilir
     }
 
     override fun onResume() {
         super.onResume()
-        // Eğer mevcut fragment animasyonlu arkaplanı göstermeliyse animasyonu başlat/devam ettir
         if (isAnimatedBgActiveForCurrentDest) {
             animatedBackground?.startAnimation()
         }
@@ -130,10 +137,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        // Activity durakladığında animasyonu her zaman durdur
         animatedBackground?.stopAnimation()
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

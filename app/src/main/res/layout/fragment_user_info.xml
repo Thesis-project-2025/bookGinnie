@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,7 +17,8 @@
             android:id="@+id/profileLottieView"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:lottie_rawRes="@raw/avatar_animation" app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/avatar_animation"
+            app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +39,7 @@
             app:civ_border_color="?attr/colorPrimary"
             android:visibility="gone"
             android:contentDescription="@string/profile_picture_description" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonChangeProfilePic"
             style="@style/Widget.Material3.Button.TextButton.Icon"
@@ -52,7 +53,8 @@
             android:textSize="16sp"
             app:cornerRadius="16dp"
             android:background="@drawable/rounded_background"
-            app:layout_constraintTop_toBottomOf="@id/profileLottieView" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileLottieView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="60dp"
             android:layout_marginEnd="68dp"
@@ -210,6 +212,28 @@
             app:cornerRadius="16dp"
             app:strokeColor="?android:attr/textColorPrimary"
             android:fontFamily="@font/nunito_bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLogOut"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/log_out"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorError"
+            app:icon="@drawable/ic_logout"
+            app:iconTint="?attr/colorError"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/buttonChangePassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="68dp"
+            app:cornerRadius="16dp"
+            app:strokeColor="?attr/colorError"
+            android:fontFamily="@font/nunito_bold" />
+
 
         <ProgressBar
             android:id="@+id/progressBarUserInfo"

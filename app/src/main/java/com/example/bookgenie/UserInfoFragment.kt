@@ -1,3 +1,4 @@
+// UserInfoFragment.kt
 package com.example.bookgenie
 
 import android.app.Activity
@@ -14,9 +15,11 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.bookgenie.databinding.FragmentUserInfoBinding
-import com.google.firebase.auth.EmailAuthProvider
+// import com.google.firebase.auth.EmailAuthProvider // Kullanılmıyorsa kaldırılabilir
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,7 +31,8 @@ class UserInfoFragment : Fragment() {
     private var _binding: FragmentUserInfoBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var auth: FirebaseAuth
+    // Firebase Authentication için değişken
+    private lateinit var auth: FirebaseAuth // EKLENDİ: auth değişkeninin tanımı
     private lateinit var db: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private var currentUser: FirebaseUser? = null
@@ -36,10 +40,14 @@ class UserInfoFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
-    // Kullanıcının orijinal bilgilerini saklamak için
     private var originalUsername: String? = null
     private var originalAge: String? = null
     private var originalProfileImageUrl: String? = null
+
+    // Çıkış yaptıktan sonra OnboardingFragment'a yönlendirme için action ID
+    // Bu ID'nin main_activity_nav.xml dosyasında UserInfoFragment'tan OnboardingFragment'a
+    // giden bir action olarak tanımlanması gerekecek.
+    private val actionUserInfoToOnboarding by lazy { R.id.action_userInfoFragment_to_onboardingFragment } // Kendi action ID'nizle değiştirin
 
 
     override fun onCreateView(
@@ -47,21 +55,26 @@ class UserInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUserInfoBinding.inflate(inflater, container, false)
+
+        // Firebase servislerini initialize et
+        auth = FirebaseAuth.getInstance() // auth burada initialize ediliyor.
+        db = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+        currentUser = auth.currentUser // currentUser, auth initialize edildikten sonra atanıyor.
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
-        currentUser = auth.currentUser
+        // auth, db, storage ve currentUser onCreateView'de initialize edildi.
+        // Burada tekrar initialize etmeye gerek yok.
 
         setupActivityResultLauncher()
         loadUserProfile()
         setupClickListeners()
-        updateUIEditMode(false) // Başlangıçta düzenleme modu kapalı
+        updateUIEditMode(false)
     }
 
     private fun setupActivityResultLauncher() {
@@ -71,15 +84,13 @@ class UserInfoFragment : Fragment() {
                     val data: Intent? = result.data
                     data?.data?.let {
                         imageUri = it
-                        // Resmi ImageView'da göster ve Lottie'yi gizle
                         Glide.with(this)
                             .load(imageUri)
-                            .placeholder(R.drawable.person) // Yüklenirken gösterilecek resim
-                            .error(R.drawable.person) // Hata durumunda gösterilecek resim
+                            .placeholder(R.drawable.person) // Projenizde R.drawable.person olduğundan emin olun
+                            .error(R.drawable.person)       // Projenizde R.drawable.person olduğundan emin olun
                             .into(binding.actualProfileImageView)
                         binding.actualProfileImageView.visibility = View.VISIBLE
                         binding.profileLottieView.visibility = View.GONE
-                        // Resmi hemen yükle ve kaydet
                         uploadImageToFirebaseStorage()
                     }
                 }
@@ -97,12 +108,13 @@ class UserInfoFragment : Fragment() {
                     showLoading(false)
                     if (document != null && document.exists()) {
                         originalUsername = document.getString("username")
-                        val email = document.getString("email") // E-posta Firebase Auth'dan alınabilir, Firestore'da da tutuluyorsa buradan.
+                        // E-posta Firebase Auth'dan alınabilir, Firestore'da da tutuluyorsa buradan da okunabilir.
+                        // val emailFromFirestore = document.getString("email")
                         originalAge = document.getLong("age")?.toString()
                         originalProfileImageUrl = document.getString("profileImageUrl")
 
                         binding.editTextName.setText(originalUsername ?: "")
-                        binding.editTextEmail.setText(currentUser?.email ?: email ?: "") // Öncelik Auth e-postası
+                        binding.editTextEmail.setText(currentUser?.email ?: "") // Öncelik Auth e-postası
                         binding.editTextAge.setText(originalAge ?: "")
 
                         if (!originalProfileImageUrl.isNullOrEmpty()) {
@@ -133,6 +145,7 @@ class UserInfoFragment : Fragment() {
             Log.w("UserInfoFragment", "Current user is null.")
             Toast.makeText(context, getString(R.string.please_sign_in), Toast.LENGTH_SHORT).show()
             // Gerekirse giriş ekranına yönlendir
+            // Örneğin: findNavController().navigate(R.id.action_global_to_loginFragment) // Nav grafiğinize göre
         }
     }
 
@@ -150,7 +163,6 @@ class UserInfoFragment : Fragment() {
         }
 
         binding.buttonCancelEdit.setOnClickListener {
-            // Değişiklikleri geri al ve düzenleme modunu kapat
             binding.editTextName.setText(originalUsername ?: "")
             binding.editTextAge.setText(originalAge ?: "")
             if (!originalProfileImageUrl.isNullOrEmpty()) {
@@ -169,21 +181,25 @@ class UserInfoFragment : Fragment() {
         binding.buttonChangePassword.setOnClickListener {
             sendPasswordResetEmail()
         }
+
+        binding.buttonLogOut.setOnClickListener {
+            showLogOutConfirmationDialog()
+        }
     }
 
     private fun openImageChooser() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        // Alternatif olarak:
-        // val intent = Intent()
-        // intent.type = "image/*"
-        // intent.action = Intent.ACTION_GET_CONTENT
         activityResultLauncher.launch(intent)
     }
 
     private fun uploadImageToFirebaseStorage() {
         imageUri?.let { uri ->
             showLoading(true)
-            val userId = currentUser?.uid ?: return@let
+            val userId = currentUser?.uid ?: run {
+                showLoading(false)
+                Toast.makeText(context, "User not logged in.", Toast.LENGTH_SHORT).show()
+                return@let
+            }
             // Dosya adını benzersiz yapın (örn: userId.jpg veya userId_timestamp.jpg)
             val fileName = "${userId}_profile.jpg"
             val storageRef: StorageReference = storage.reference.child("profile_images/$fileName")
@@ -192,8 +208,9 @@ class UserInfoFragment : Fragment() {
                 .addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
                         updateUserProfileImageUrlInFirestore(downloadUrl.toString())
-                    }.addOnFailureListener {
+                    }.addOnFailureListener {  exception -> // Hata durumunda exception parametresini ekle
                         showLoading(false)
+                        Log.e("UserInfoFragment", "Failed to get download URL", exception)
                         Toast.makeText(context, getString(R.string.image_upload_failed) + ": URL alınamadı", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -203,15 +220,19 @@ class UserInfoFragment : Fragment() {
                     Toast.makeText(context, getString(R.string.image_upload_failed) + ": ${exception.message}", Toast.LENGTH_LONG).show()
                 }
                 .addOnProgressListener { snapshot ->
-                    // Yükleme ilerlemesini gösterebilirsiniz
                     val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount)
                     Log.d("UserInfoFragment", "Upload is $progress% done")
+                    // İsterseniz burada bir ProgressBar güncelleyebilirsiniz.
                 }
         }
     }
 
     private fun updateUserProfileImageUrlInFirestore(imageUrl: String) {
-        val userId = currentUser?.uid ?: return
+        val userId = currentUser?.uid ?: run {
+            showLoading(false) // Eğer userId null ise yüklemeyi durdur
+            Toast.makeText(context, "User not logged in to update image URL.", Toast.LENGTH_SHORT).show()
+            return
+        }
         db.collection("users_info").document(userId)
             .update("profileImageUrl", imageUrl)
             .addOnSuccessListener {
@@ -231,19 +252,21 @@ class UserInfoFragment : Fragment() {
     private fun updateUIEditMode(isEdit: Boolean) {
         binding.editTextName.isEnabled = isEdit
         binding.editTextAge.isEnabled = isEdit
-        // binding.editTextEmail.isEnabled = isEdit // E-posta genellikle Auth üzerinden güncellenir, şimdilik kapalı
+        // binding.editTextEmail.isEnabled = isEdit // E-posta genellikle Auth üzerinden güncellenir, bu yüzden kapalı kalması iyi bir pratik.
 
         if (isEdit) {
             binding.buttonEditProfile.visibility = View.GONE
             binding.buttonSaveChanges.visibility = View.VISIBLE
             binding.buttonCancelEdit.visibility = View.VISIBLE
-            binding.buttonChangePassword.visibility = View.GONE // Düzenleme sırasında şifre değiştirme gizlensin
+            binding.buttonChangePassword.visibility = View.GONE
+            binding.buttonLogOut.visibility = View.GONE // Düzenleme sırasında çıkış yap butonu da gizlensin
             binding.editTextName.requestFocus() // İsim alanına odaklan
         } else {
             binding.buttonEditProfile.visibility = View.VISIBLE
             binding.buttonSaveChanges.visibility = View.GONE
             binding.buttonCancelEdit.visibility = View.GONE
             binding.buttonChangePassword.visibility = View.VISIBLE
+            binding.buttonLogOut.visibility = View.VISIBLE // Düzenleme modu kapalıyken göster
         }
     }
 
@@ -251,23 +274,42 @@ class UserInfoFragment : Fragment() {
         val newUsername = binding.editTextName.text.toString().trim()
         val newAgeString = binding.editTextAge.text.toString().trim()
 
-        if (newUsername.isEmpty() || newAgeString.isEmpty()) {
-            Toast.makeText(context, "Ad ve yaş boş bırakılamaz.", Toast.LENGTH_SHORT).show()
+        if (newUsername.isEmpty()) {
+            binding.tilName.error = "Name cannot be empty" // TextInputLayout ile hata göster
+            // Toast.makeText(context, "Ad boş bırakılamaz.", Toast.LENGTH_SHORT).show()
             return
+        } else {
+            binding.tilName.error = null // Hata yoksa temizle
         }
+
+        if (newAgeString.isEmpty()) {
+            binding.tilAge.error = "Age cannot be empty" // TextInputLayout ile hata göster
+            // Toast.makeText(context, "Yaş boş bırakılamaz.", Toast.LENGTH_SHORT).show()
+            return
+        } else {
+            binding.tilAge.error = null // Hata yoksa temizle
+        }
+
 
         val newAge = newAgeString.toIntOrNull()
         if (newAge == null || newAge <= 0) {
-            Toast.makeText(context, "Lütfen geçerli bir yaş girin.", Toast.LENGTH_SHORT).show()
+            binding.tilAge.error = "Please enter a valid age" // TextInputLayout ile hata göster
+            // Toast.makeText(context, "Lütfen geçerli bir yaş girin.", Toast.LENGTH_SHORT).show()
             return
+        } else {
+            binding.tilAge.error = null // Hata yoksa temizle
         }
 
         showLoading(true)
-        val userId = currentUser?.uid ?: return
+        val userId = currentUser?.uid ?: run {
+            showLoading(false)
+            Toast.makeText(context, "User not logged in.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val updates = hashMapOf<String, Any>(
             "username" to newUsername,
-            "age" to newAge
+            "age" to newAge // newAge zaten Int
         )
 
         db.collection("users_info").document(userId)
@@ -306,14 +348,46 @@ class UserInfoFragment : Fragment() {
         }
     }
 
+    private fun showLogOutConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.log_out_dialog_title))
+            .setMessage(getString(R.string.log_out_dialog_message))
+            .setPositiveButton(getString(R.string.log_out_confirm)) { dialog, _ ->
+                logOutUser()
+                dialog.dismiss()
+            }
+            .setNegativeButton(getString(R.string.cancel_dialog)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun logOutUser() {
+        showLoading(true)
+        auth.signOut()
+
+        val navOptions = NavOptions.Builder()
+            .setPopUpTo(R.id.main_activity_nav, true)
+            .build()
+
+        findNavController().navigate(actionUserInfoToOnboarding, null, navOptions)
+        // Yönlendirme sonrası bu fragment yok olacağı için showLoading(false) gerekmeyebilir,
+        // ama yine de Toast mesajından önce çağrılabilir.
+        // showLoading(false)
+        Toast.makeText(context, getString(R.string.logged_out_successfully), Toast.LENGTH_SHORT).show()
+    }
+
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressBarUserInfo.visibility = if (isLoading) View.VISIBLE else View.GONE
-        // Yükleme sırasında diğer butonları devre dışı bırakabilirsiniz
-        binding.buttonChangeProfilePic.isEnabled = !isLoading
-        binding.buttonEditProfile.isEnabled = !isLoading
-        binding.buttonSaveChanges.isEnabled = !isLoading
-        binding.buttonCancelEdit.isEnabled = !isLoading
-        binding.buttonChangePassword.isEnabled = !isLoading
+        // Butonların durumunu ayarla
+        val buttonsAreEnabled = !isLoading
+        binding.buttonChangeProfilePic.isEnabled = buttonsAreEnabled
+        binding.buttonEditProfile.isEnabled = buttonsAreEnabled
+        binding.buttonSaveChanges.isEnabled = buttonsAreEnabled
+        binding.buttonCancelEdit.isEnabled = buttonsAreEnabled
+        binding.buttonChangePassword.isEnabled = buttonsAreEnabled
+        binding.buttonLogOut.isEnabled = buttonsAreEnabled
     }
 
     override fun onDestroyView() {
