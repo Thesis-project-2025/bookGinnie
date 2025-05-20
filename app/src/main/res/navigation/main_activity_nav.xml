@@ -103,6 +103,11 @@
         <action
             android:id="@+id/action_settingsFragment_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_onboardingFragment"
+            app:destination="@id/onboardingFragment"
+            app:popUpTo="@id/main_activity_nav"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/userInfoFragment"
@@ -146,10 +151,16 @@
         tools:layout="@layout/fragment_fairy_tale" >
         <action
             android:id="@+id/fairyToGeneration"
-            app:destination="@id/generationFragment" />
+            app:destination="@id/generationFragment" app:enterAnim="@anim/slide_in_from_right_magic"
+            app:exitAnim="@anim/fade_out_magic"
+            app:popEnterAnim="@anim/fade_in_magic"
+            app:popExitAnim="@anim/slide_out_to_left_magic" />
         <action
             android:id="@+id/fairyToSpeech"
-            app:destination="@id/speechFragment" />
+            app:destination="@id/speechFragment" app:enterAnim="@anim/slide_in_from_right_magic"
+            app:exitAnim="@anim/fade_out_magic"
+            app:popEnterAnim="@anim/fade_in_magic"
+            app:popExitAnim="@anim/slide_out_to_left_magic" />
     </fragment>
     <action
         android:id="@+id/action_global_fairyFragment"
@@ -169,4 +180,8 @@
         android:name="com.example.bookgenie.SpeechFragment"
         android:label="fragment_speech"
         tools:layout="@layout/fragment_speech" />
+    <dialog
+        android:id="@+id/filterBottomSheetDialogFragment"
+        android:name="com.example.bookgenie.FilterBottomSheetDialogFragment"
+        android:label="FilterBottomSheetDialogFragment" />
 </navigation>

@@ -23,8 +23,7 @@
             android:background="?attr/customToolbarBackgroundColor"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Settings"
-            app:titleTextColor="@color/beige" /> </FrameLayout>
+            app:title="@string/settings_title" app:titleTextColor="@color/beige" /> </FrameLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollViewSettings"
@@ -49,11 +48,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                android:drawableEnd="@drawable/edit_arrow_right" android:drawablePadding="8dp"
+                android:drawableEnd="@drawable/edit_arrow_right"
+                android:drawablePadding="8dp"
                 android:gravity="center_vertical|start"
                 android:padding="8dp"
-                android:text="Edit Profile"
-                android:textAllCaps="false"
+                android:text="@string/edit_profile_button" android:textAllCaps="false"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:stateListAnimator="@null"
@@ -64,27 +63,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Notifications"
-                android:textColor="?android:attr/textColorPrimary"
+                android:text="@string/notifications_switch" android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:thumbTint="?attr/customSwitchThumbColor"
-                app:trackTint="?attr/customSwitchTrackColor" />
+                app:thumbTint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                app:trackTint="?attr/aydinlikta_mor_karanlikta_beyaz" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switchTheme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dark Mode"
-                android:textSize="18sp"
+                android:text="@string/dark_mode_switch" android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="?android:attr/textColorPrimary"
                 android:layout_marginTop="16dp"
                 android:padding="8dp"
-                app:thumbTint="?attr/customSwitchThumbColor"
-                app:trackTint="?attr/customSwitchTrackColor" />
+                app:thumbTint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                app:trackTint="?attr/aydinlikta_mor_karanlikta_beyaz" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonDeleteAccount"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/delete_account_button" android:textAllCaps="false"
+                android:textColor="?attr/colorError"
+                app:strokeColor="?attr/colorError"
+                app:icon="@drawable/ic_delete_forever"
+                app:iconTint="?attr/colorError"
+                android:textSize="18sp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <ProgressBar
+        android:id="@+id/progressBarSettings"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -64,4 +64,18 @@
 
     <string name="explore_by_genre_text">Explore by Genre</string>
     <string name="book_cover_content_description">Cover Page</string>
+
+    <string name="delete_account_dialog_title">Delete Account?</string>
+    <string name="delete_account_dialog_message">Are you sure you want to delete your account? This action is irreversible and all your data will be permanently lost.</string>
+    <string name="delete_confirm">Delete</string>
+    <string name="account_deleted_successfully">Account deleted successfully.</string>
+    <string name="error_deleting_data">Error deleting user data: %s</string>
+    <string name="error_deleting_account">Error deleting account: %s. You may need to sign in again.</string>
+    <string name="user_not_logged_in">User not logged in.</string>
+
+    <string name="dark_mode_switch">Dark Mode</string>
+    <string name="notifications_switch">Notifications</string>
+    <string name="delete_account_button">Delete Account</string>
+    <string name="edit_profile_button">Edit Profile</string>
+    <string name="settings_title">Settings</string>
 </resources>

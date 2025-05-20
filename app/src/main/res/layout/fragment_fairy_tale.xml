@@ -4,11 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    tools:context=".FairyTaleFragment">
-
-
-    <!-- Lottie Animation -->
+    android:background="@drawable/magical_background_gradient" tools:context=".FairyTaleFragment">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimationView"
@@ -20,38 +16,33 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/star" />
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottieAnimationView2"
-        android:layout_width="126dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.874"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/star" />
-
-    <TextView
-        android:id="@+id/masal1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="234dp"
-        android:layout_marginBottom="12dp"
-        android:fontFamily="@font/fredoka_medium"
-        android:text="@string/masal1"
-        android:textColor="@color/beyazimsi"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/masal2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:lottie_rawRes="@raw/star" /> <com.airbnb.lottie.LottieAnimationView
+    android:id="@+id/lottieAnimationView2"
+    android:layout_width="126dp"
+    android:layout_height="115dp"
+    android:layout_marginTop="4dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.874"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView"
+    app:lottie_autoPlay="true"
+    app:lottie_loop="true"
+    app:lottie_rawRes="@raw/star" /> <TextView
+    android:id="@+id/masal1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="31dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginEnd="234dp"
+    android:layout_marginBottom="12dp"
+    android:fontFamily="@font/fredoka_medium"
+    android:text="@string/masal1"
+    android:textColor="@color/light_parchment" android:textSize="25sp"
+    android:textStyle="bold"
+    android:shadowColor="@color/gold_glow" android:shadowDx="2" android:shadowDy="2" android:shadowRadius="4" app:layout_constraintBottom_toTopOf="@+id/masal2"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/masal2"
@@ -62,9 +53,8 @@
         android:layout_marginEnd="250dp"
         android:fontFamily="@font/fredoka_medium"
         android:text="@string/masal2"
-        android:textColor="@color/beyazimsi"
-        android:textSize="23sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/light_parchment" android:textSize="23sp"
+        android:shadowColor="@color/gold_glow" android:shadowDx="1.5" android:shadowDy="1.5" android:shadowRadius="3" app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/masal1" />
 
@@ -72,13 +62,11 @@
         android:id="@+id/imageView4"
         android:layout_width="339dp"
         android:layout_height="191dp"
-        android:src="@drawable/genie2"
-        android:layout_marginTop="12dp"
+        android:src="@drawable/genie2" android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/masal2" />
 
-    <!-- CardView container -->
     <LinearLayout
         android:id="@+id/cardContainer"
         android:layout_width="match_parent"
@@ -90,17 +78,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4">
 
-        <!-- Card 1 -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card1"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            app:cardBackgroundColor="@color/beyazimsi"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/deselectedColor" app:cardCornerRadius="16dp"
             app:cardElevation="8dp">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -121,23 +106,18 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/nunito_bold"
                     android:text="bookGenieland Factory"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textColor="@color/deep_magic_purple" android:textSize="16sp" />
             </LinearLayout>
-
         </androidx.cardview.widget.CardView>
 
-        <!-- Card 2 -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card2"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
-            app:cardBackgroundColor="@color/beyazimsi"
-            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/deselectedColor" app:cardCornerRadius="16dp"
             app:cardElevation="8dp">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -158,27 +138,32 @@
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/nunito_bold"
                     android:text="Once Upon a Voice"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textColor="@color/deep_magic_purple" android:textSize="16sp" />
             </LinearLayout>
-
         </androidx.cardview.widget.CardView>
-
     </LinearLayout>
 
-    <!-- Button -->
-    <Button
-        android:id="@+id/goToPageButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:backgroundTint="@color/Shadowed_Earth_4"
-        android:text="Choose"
-        android:textColor="@color/Shadowed_Earth_5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardContainer" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/button_sparkle_lottie"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:lottie_rawRes="@raw/sparkle_burst" app:lottie_autoPlay="false"
+        app:lottie_loop="false"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/goToPageButton"
+        app:layout_constraintBottom_toBottomOf="@+id/goToPageButton"
+        app:layout_constraintStart_toStartOf="@+id/goToPageButton"
+        app:layout_constraintEnd_toEndOf="@+id/goToPageButton"
+        android:elevation="10dp"/> <Button
+    android:id="@+id/goToPageButton"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="32dp"
+    android:layout_marginTop="32dp"
+    android:layout_marginEnd="32dp"
+    android:background="@drawable/magical_button_background" android:text="Choose"
+    android:textColor="@color/button_magic_text_color" android:fontFamily="@font/fredoka_medium" android:textStyle="bold" app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/cardContainer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

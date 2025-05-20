@@ -29,8 +29,8 @@
     <color name="kremimsi">#ECDFCC</color>
 
 
-    <color name="selectedColor">#D5E5D5</color> <!-- Seçilen kartın rengi -->
-    <color name="deselectedColor">#FFFFFFFF</color> <!-- Seçilmeyen kartın rengi -->
+    <!--<color name="selectedColor">#D5E5D5</color>  Seçilen kartın rengi -->
+    <!--<color name="deselectedColor">#FFFFFFFF</color>  Seçilmeyen kartın rengi -->
 
     <color name="Midnight_Shadows_1">#0F0F1B</color>
     <color name="Midnight_Shadows_2">#16213E</color>
@@ -39,8 +39,8 @@
     <color name="E94560_darker">#C33A52</color> <!-- Midnight_Shadows_4 (@color/E94560) renginin biraz daha koyu tonu -->
     <color name="Midnight_Shadows_5">#F9F9F9</color>
 
-    <color name="Shadowed_Earth_1">#2C1832</color>
-    <color name="Shadowed_Earth_2">#311B38</color>
+    <color name="Shadowed_Earth_1">#201224</color>
+    <color name="Shadowed_Earth_2">#26152C</color>
     <color name="Shadowed_Earth_3">#4A2A52</color>
     <color name="Shadowed_Earth_4">#6F6073</color>
     <color name="Shadowed_Earth_5">#F9F9F9</color>
@@ -53,10 +53,30 @@
     <color name="search4">#D76C82</color>
     <color name="search5">#FF9F00</color>
 
+    <color name="default_text_color_primary">#DE000000</color>
+    <color name="default_text_color_hint">#61000000</color>
+    <color name="white_transparent_more">#B3FFFFFF</color>
 
+    <color name="mystic_blue_start">#2A2A72</color>
+    <color name="mystic_blue_end">#009FFD</color>
+    <color name="gold_glow">#FFD700</color>
+    <color name="light_parchment">#FFF8E1</color>
+    <color name="silver_sparkle">#C0C0C0</color>
 
+    <color name="card_selected_bg_magic">#4A3F70</color>
+    <color name="card_deselected_bg_magic">#D1C4E9</color>
+    <color name="card_selected_stroke_magic">@color/gold_glow</color>
+    <color name="button_magic_gradient_start">#FFC371</color>
+    <color name="button_magic_gradient_end">#FF5F6D</color>
+    <color name="button_magic_text_color">@color/white</color>
+    <color name="deep_magic_purple">#2C143C</color>
 
+    <color name="selectedColor">@color/card_selected_bg_magic</color>
+    <color name="deselectedColor">@color/card_deselected_bg_magic</color>
 
-
+    <color name="deep_magic_purple_alpha_low">#402C143C</color>
+    <color name="gold_glow_alpha_medium">#80FFD700</color>
+    <color name="silver_sparkle_alpha_low">#4DC0C0C0</color>
+    <color name="light_parchment_alpha_medium">#99FFF8E1</color>
 
 </resources>

@@ -64,6 +64,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     implementation(libs.androidx.palette.ktx)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.core.animation)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
 
     // Test bağımlılıkları
@@ -99,4 +100,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation("com.github.bumptech.glide:glide:4.12.0") // En son sürümü kontrol edin
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }

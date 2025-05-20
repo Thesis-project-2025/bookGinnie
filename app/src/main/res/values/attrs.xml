@@ -12,4 +12,5 @@
     <attr name="fabButtonColor" format="color" />
     <attr name="aydinlikta_mor_karanlikta_beyaz" format="color" />
     <attr name="karanlikta_mor_aydinlikta_beyaz" format="color" />
+    <attr name="karanlikta_mavi_aydinlikta_mor" format="color" />
 </resources>

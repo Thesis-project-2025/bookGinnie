@@ -4,21 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    tools:context=".GenerationFragment">
+    android:background="@drawable/magical_background_gradient" tools:context=".GenerationFragment">
 
-        <!-- Arka Plan Blob -->
-        <ImageView
-            android:id="@+id/blobShape"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- TextInput (Prompt kutusu) -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
             android:layout_width="0dp"
@@ -26,31 +14,21 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="187dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/rounded_input"
-            app:boxBackgroundMode="none"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/magical_prompt_background" app:boxBackgroundMode="none"
+            app:hintTextColor="@color/light_parchment_alpha_medium" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:paddingStart="8dp"
             app:startIconContentDescription="Pen Icon"
-            app:startIconDrawable="@drawable/pen">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/promptEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/nunito_bold"
-                    android:hint="Enter your prompt..."
-                    android:inputType="text"
-                    android:paddingStart="50dp"
-                    android:textColor="@color/Shadowed_Earth_5"
-                    android:textColorHint="@color/Shadowed_Earth_5" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ScrollView: Masal metni -->
-
-        <!-- Şık çerçeve içinde buton -->
-
+            app:startIconDrawable="@drawable/pen"
+            app:startIconTint="@color/gold_glow"> <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/promptEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_bold"
+            android:hint="Whisper a fairytale idea..." android:inputType="text"
+            android:paddingStart="50dp"
+            android:textColor="@color/light_parchment" android:textColorHint="@color/light_parchment_alpha_medium" /> </com.google.android.material.textfield.TextInputLayout>
         <ScrollView
             android:id="@+id/scrollViewMasal"
             android:layout_width="0dp"
@@ -59,8 +37,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
+            android:background="@drawable/magical_scrollview_border" android:padding="16dp"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toTopOf="@id/saveContainer"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,17 +51,19 @@
                     android:fontFamily="@font/nunito_bold"
                     android:gravity="center_horizontal|top"
                     android:lineSpacingExtra="8dp"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="18sp"
-                    tools:text="Eskiden burada uzun bir masal metni olurdu..." />
-        </ScrollView>
+                    android:textColor="@color/light_parchment" android:textSize="18sp"
+                    android:shadowColor="@color/gold_glow"
+                     android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="2"
+                    tools:text="A long fairytale would appear here once upon a time..." /> </ScrollView>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loadingLottieView"
             android:layout_width="150dp" android:layout_height="150dp" android:visibility="gone"
             app:lottie_rawRes="@raw/bee_loading" app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:layout_constraintBottom_toBottomOf="@+id/scrollViewMasal"
+            android:elevation="10dp" app:layout_constraintBottom_toBottomOf="@+id/scrollViewMasal"
             app:layout_constraintEnd_toEndOf="@+id/scrollViewMasal"
             app:layout_constraintStart_toStartOf="@+id/scrollViewMasal"
             app:layout_constraintTop_toTopOf="@+id/scrollViewMasal"
@@ -94,32 +73,26 @@
             android:id="@+id/saveContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="100dp"
-            android:layout_marginBottom="48dp"
-            app:cardBackgroundColor="@color/Shadowed_Earth_4"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="6dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="80dp" android:layout_marginEnd="80dp" android:layout_marginBottom="48dp"
+            app:cardBackgroundColor="@android:color/transparent" app:cardCornerRadius="24dp"
+            app:cardElevation="0dp" app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
                 <Button
                     android:id="@+id/btnSaveStory"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/nunito_bold"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:text="KAYDET"
-                    android:textColor="@color/Shadowed_Earth_5"
+                    android:text="SEAL THE STORY"
+                    android:background="@drawable/magical_button_background"
+                    android:textColor="@color/button_magic_text_color"
                     android:textSize="16sp"
-                    android:backgroundTint="@android:color/transparent"
                     app:layout_constraintTop_toBottomOf="@id/scrollViewMasal" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Görseller -->
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="155dp"
@@ -146,16 +119,14 @@
             android:layout_marginTop="16dp"
             android:src="@drawable/star"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/blobShape" />
-
-        <ImageView
-            android:id="@+id/imageView7"
-            android:layout_width="72dp"
-            android:layout_height="108dp"
-            android:layout_marginStart="112dp"
-            android:src="@drawable/star"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" /> <ImageView
+    android:id="@+id/imageView7"
+    android:layout_width="72dp"
+    android:layout_height="108dp"
+    android:layout_marginStart="112dp"
+    android:src="@drawable/star"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView5"
@@ -165,5 +136,4 @@
             android:layout_marginTop="64dp"
             android:src="@drawable/star"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/blobShape" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent" /> </androidx.constraintlayout.widget.ConstraintLayout>
