@@ -17,74 +17,73 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="10dp"/> <FrameLayout
+    android:id="@+id/toolbarFrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <FrameLayout
-        android:id="@+id/toolbarFrameLayout"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarMainPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="?attr/customToolbarBackgroundColor"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarMainPage"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/customToolbarBackgroundColor"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
+            android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/bookGenieLogo"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="0dp"
+                android:src="@drawable/logotransparent_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/bookGenieLogo"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginStart="0dp"
-                    android:src="@drawable/logotransparent_white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchMainpage"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_background"
+                android:elevation="2dp"
+                android:queryHint="Search for your favorite book"
+                android:textColor="?attr/aydinlikta_mor_karanlikta_beyaz"
+                android:textColorHint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/filterButton"
+                app:layout_constraintStart_toEndOf="@+id/bookGenieLogo"
+                app:layout_constraintTop_toTopOf="parent"
+                app:searchIcon="@drawable/baseline_search_24" />
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/searchMainpage"
-                    android:layout_width="0dp"
-                    android:layout_height="38dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/rounded_background"
-                    android:elevation="2dp"
-                    android:queryHint="Search for your favorite book"
-                    android:textColor="?attr/aydinlikta_mor_karanlikta_beyaz"
-                    android:textColorHint="?attr/aydinlikta_mor_karanlikta_beyaz"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/filterButton"
-                    app:layout_constraintStart_toEndOf="@+id/bookGenieLogo"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:searchIcon="@drawable/baseline_search_24" />
+            <ImageButton
+                android:id="@+id/filterButton"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginEnd="10dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:contentDescription="Filter Search Results"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                app:tint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageButton
-                    android:id="@+id/filterButton"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
-                    android:contentDescription="Filter Search Results"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="6dp"
-                    android:scaleType="fitCenter"
-                    android:visibility="gone"
-                    app:tint="?attr/aydinlikta_mor_karanlikta_beyaz"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.appcompat.widget.Toolbar>
-    </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+</FrameLayout>
 
 
     <androidx.core.widget.NestedScrollView
@@ -315,4 +314,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tvNoResultsSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No books found matching your criteria."
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.3" /> </androidx.constraintlayout.widget.ConstraintLayout>

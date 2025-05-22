@@ -1,6 +1,7 @@
 package com.example.bookgenie
 
 // Seçilen filtreleri tutmak için data class
+
 data class BookFilters(
     val selectedGenres: List<String> = emptyList(),
     val minRating: Double? = null,

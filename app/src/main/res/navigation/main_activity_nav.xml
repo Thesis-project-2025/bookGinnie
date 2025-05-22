@@ -122,6 +122,9 @@
             app:destination="@id/onboardingFragment"
             app:popUpTo="@id/main_activity_nav"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_userInfoFragment_to_userRatingsFragment"
+            app:destination="@id/userRatingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -184,4 +187,18 @@
         android:id="@+id/filterBottomSheetDialogFragment"
         android:name="com.example.bookgenie.FilterBottomSheetDialogFragment"
         android:label="FilterBottomSheetDialogFragment" />
+
+    <fragment
+        android:id="@+id/userRatingsFragment"
+        android:name="com.example.bookgenie.UserRatingsFragment"
+        android:label="fragment_user_ratings"
+        tools:layout="@layout/fragment_user_ratings" >
+        <action
+            android:id="@+id/action_userRatingsFragment_to_bookDetailsFragment"
+            app:destination="@id/bookDetailsFragment" />
+        <!-- Bu action, UserRatedBooksAdapter'da BookDetailsFragment'a gitmek için kullanılır.
+             BookDetailsFragment'ın 'book' (com.example.bookgenie.Books tipinde)
+             argümanını kabul ettiğinden emin olun. -->
+    </fragment>
+
 </navigation>

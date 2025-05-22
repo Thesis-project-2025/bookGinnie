@@ -78,4 +78,13 @@
     <string name="delete_account_button">Delete Account</string>
     <string name="edit_profile_button">Edit Profile</string>
     <string name="settings_title">Settings</string>
+
+    <string name="my_rated_books">My Rated Books</string>
+    <string name="my_rated_books_count">My Rated Books (%d)</string>
+
+    <string name="total_ratings_count_placeholder">Total Ratings: %d</string>
+    <string name="no_books_rated_yet">You haven\'t rated any books yet.</string>
+    <string name="could_not_load_rated_book_details">Could not load details for rated books.</string>
+    <string name="error_loading_ratings">Error loading ratings.</string>
+    <string name="please_sign_in_to_see_ratings">Please sign in to see your ratings.</string>
 </resources>

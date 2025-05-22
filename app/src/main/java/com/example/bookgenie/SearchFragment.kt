@@ -557,6 +557,7 @@ class SearchFragment : Fragment() {
         val publisher = handleStringOrNaN(document.get("publisher"))
         val title = handleStringOrNaN(document.get("title"))
         val rating_count = convertStringOrIntToInt(document.get("rating_count"))
+        val title_lowercase = handleStringOrNaN(document.get("title_lowercase")) // title_lowercase burada dolduruluyor
 
         return Books(
             authors,
@@ -578,7 +579,8 @@ class SearchFragment : Fragment() {
             publication_year,
             publisher,
             title,
-            rating_count
+            rating_count,
+            title_lowercase
         )
     }
 
