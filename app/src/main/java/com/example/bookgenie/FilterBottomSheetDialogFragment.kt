@@ -11,25 +11,6 @@ import com.example.bookgenie.databinding.FragmentFilterBottomSheetDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 
-// BookFilters sınıfının Parcelable olması şiddetle tavsiye edilir.
-// import kotlinx.parcelize.Parcelize
-// import android.os.Parcelable
-//
-// @Parcelize
-// data class BookFilters(
-//    val selectedGenres: List<String> = emptyList(),
-//    val minRating: Double? = null,
-//    val sortBy: SortOption = SortOption.RELEVANCE,
-//    val author: String? = null,
-//    val publicationYear: Int? = null
-// ) : Parcelable
-//
-// enum class SortOption {
-//    RELEVANCE,
-//    RATING_DESC,
-//    PUBLICATION_YEAR_DESC
-// }
-
 
 class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
 
@@ -87,7 +68,7 @@ class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 selectedGenres = ArrayList(genres), // Değiştirilebilir liste için kopyala
                 minRating = rating,
                 sortBy = try { SortOption.valueOf(sortName) } catch (e: IllegalArgumentException) { SortOption.RELEVANCE },
-                author = author,
+                //author = author,
                 publicationYear = year
             )
         }
@@ -143,7 +124,7 @@ class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
         }
 
         // Yazar
-        binding.etAuthor.setText(initialFilters.author ?: "")
+        //binding.etAuthor.setText(initialFilters.author ?: "")
 
         // Yayın Yılı
         binding.etPublicationYear.setText(initialFilters.publicationYear?.toString() ?: "")
@@ -174,7 +155,7 @@ class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
             else -> null // R.id.rbRatingAny veya hiçbir şey seçili değilse
         }
 
-        val author = binding.etAuthor.text.toString().trim().takeIf { it.isNotEmpty() }
+        //val author = binding.etAuthor.text.toString().trim().takeIf { it.isNotEmpty() }
         val publicationYear = binding.etPublicationYear.text.toString().toIntOrNull()
 
         val sortBySelectedId = binding.rgSortBy.checkedRadioButtonId
@@ -184,7 +165,7 @@ class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
             else -> SortOption.RELEVANCE // R.id.rbSortRelevance veya hiçbir şey seçili değilse
         }
 
-        val newFilters = BookFilters(selectedGenres, minRating, sortBy, author, publicationYear)
+        val newFilters = BookFilters(selectedGenres, minRating, sortBy, publicationYear)
         listener?.onFiltersApplied(newFilters)
         dismiss()
     }
@@ -230,7 +211,7 @@ class FilterBottomSheetDialogFragment : BottomSheetDialogFragment() {
                 putStringArrayList(ARG_CURRENT_SELECTED_GENRES, ArrayList(currentFilters.selectedGenres))
                 currentFilters.minRating?.let { putDouble(ARG_CURRENT_MIN_RATING, it) }
                 putString(ARG_CURRENT_SORT_BY, currentFilters.sortBy.name) // Enum'ı string olarak kaydet
-                currentFilters.author?.let { putString(ARG_CURRENT_AUTHOR, it) }
+                //currentFilters.author?.let { putString(ARG_CURRENT_AUTHOR, it) }
                 currentFilters.publicationYear?.let { putInt(ARG_CURRENT_PUBLICATION_YEAR, it) }
             }
             fragment.arguments = args

@@ -34,9 +34,7 @@ class SettingsFragment : Fragment() {
 
     // Action ID'leri
     private val actionToUserInfo by lazy { R.id.action_settingsFragment_to_userInfoFragment }
-    // Hesabı sildikten veya çıkış yaptıktan sonra OnboardingFragment'a yönlendirme için action ID
-    private val actionSettingsToOnboarding by lazy { R.id.action_settingsFragment_to_onboardingFragment } // Nav grafiğinizde bu ID'yi oluşturun
-
+    private val actionSettingsToOnboarding by lazy { R.id.action_settingsFragment_to_onboardingFragment }
 
     companion object {
         const val PREFS_NAME = "SettingsPrefs"
@@ -56,7 +54,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Firebase servislerini ve SharedPreferences'ı initialize et
+        // Servisleri ve SharedPreferences'ı initialize et
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, 0)
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -81,41 +79,65 @@ class SettingsFragment : Fragment() {
         val switchTheme: SwitchMaterial = binding.switchTheme
         val switchNotifications: SwitchMaterial = binding.switchNotifications
 
+        // 1. Mevcut ayarları yükle ve switch'lerin durumunu ayarla
         loadAndApplySettings(switchTheme, switchNotifications)
 
+        // 2. Tema switch'i için dinleyici (listener) ata
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            val newNightMode = if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            if (AppCompatDelegate.getDefaultNightMode() != newNightMode) {
-                AppCompatDelegate.setDefaultNightMode(newNightMode)
-                saveThemeSetting(isChecked)
-                requireActivity().recreate()
+            // Seçimi anında kaydet
+            saveThemeSetting(isChecked)
+
+            // Yeni tema modunu belirle
+            val newNightMode = if (isChecked) {
+                AppCompatDelegate.MODE_NIGHT_YES
             } else {
-                saveThemeSetting(isChecked)
+                AppCompatDelegate.MODE_NIGHT_NO
             }
+
+            // Değişikliği uygula
+            AppCompatDelegate.setDefaultNightMode(newNightMode)
+
+            // requireActivity().recreate() aktivitenin yeniden oluşturulmasını sağlayarak temanın
+            // anında yansımasına neden olur. Daha pürüzsüz bir geçiş isteniyorsa bu satır
+            // kaldırılabilir, tema bir sonraki ekran geçişinde güncellenir.
         }
 
+        // 3. Bildirim switch'i için dinleyici ata
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             saveNotificationSetting(isChecked)
-            // Gerçek bildirim ayarları burada yönetilebilir.
-            // Toast.makeText(requireContext(), "Notifications ${if (isChecked) "enabled" else "disabled"}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun loadAndApplySettings(switchTheme: SwitchMaterial, switchNotifications: SwitchMaterial) {
-        val isDarkModeSaved = sharedPreferences.getBoolean(KEY_DARK_MODE, isSystemNightMode())
-        switchTheme.isChecked = isDarkModeSaved
-        // Temanın ilk açılışta doğru uygulanması için MainActivity'de de benzer bir kontrol olmalı.
+        // Switch'in durumunu belirlemek için en güvenilir yol, doğrudan AppCompatDelegate'in o anki modunu kontrol etmektir.
+        when (AppCompatDelegate.getDefaultNightMode()) {
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> {
+                // Eğer mod sistem ayarını takip ediyorsa, sistemin mevcut durumuna bak.
+                switchTheme.isChecked = isSystemNightMode()
+            }
+            AppCompatDelegate.MODE_NIGHT_YES -> {
+                switchTheme.isChecked = true
+            }
+            AppCompatDelegate.MODE_NIGHT_NO -> {
+                switchTheme.isChecked = false
+            }
+        }
 
+        // Bildirim ayarını yükle
         val areNotificationsEnabled = sharedPreferences.getBoolean(KEY_NOTIFICATIONS_ENABLED, true)
         switchNotifications.isChecked = areNotificationsEnabled
     }
 
     private fun saveThemeSetting(isDarkMode: Boolean) {
-        sharedPreferences.edit { putBoolean(KEY_DARK_MODE, isDarkMode) }
+        sharedPreferences.edit {
+            putBoolean(KEY_DARK_MODE, isDarkMode)
+        }
     }
 
     private fun saveNotificationSetting(isEnabled: Boolean) {
-        sharedPreferences.edit { putBoolean(KEY_NOTIFICATIONS_ENABLED, isEnabled) }
+        sharedPreferences.edit {
+            putBoolean(KEY_NOTIFICATIONS_ENABLED, isEnabled)
+        }
     }
 
     private fun isSystemNightMode(): Boolean {
@@ -133,7 +155,7 @@ class SettingsFragment : Fragment() {
             .setNegativeButton(getString(R.string.cancel_dialog)) { dialog, _ ->
                 dialog.dismiss()
             }
-            .setIcon(R.drawable.ic_warning) // Uyarı ikonu
+            .setIcon(R.drawable.ic_warning)
             .show()
     }
 
@@ -142,13 +164,10 @@ class SettingsFragment : Fragment() {
             showLoading(true)
             val userId = user.uid
 
-            // 1. Firestore'dan kullanıcı verilerini sil
             db.collection("users_info").document(userId).delete()
                 .addOnSuccessListener {
                     Log.d(TAG, "User data from Firestore deleted successfully.")
-                    // 2. (İsteğe bağlı) Firebase Storage'dan profil resmini sil
                     deleteProfileImageFromStorage(userId) {
-                        // 3. Firebase Auth'dan kullanıcıyı sil
                         deleteUserFromAuth(user)
                     }
                 }
@@ -163,7 +182,6 @@ class SettingsFragment : Fragment() {
     }
 
     private fun deleteProfileImageFromStorage(userId: String, onComplete: () -> Unit) {
-        // Profil resmi dosya adını, UserInfoFragment'taki yükleme mantığıyla aynı şekilde oluşturun.
         val fileName = "${userId}_profile.jpg"
         val profileImageRef = storage.reference.child("profile_images/$fileName")
 
@@ -173,8 +191,6 @@ class SettingsFragment : Fragment() {
                 onComplete()
             }
             .addOnFailureListener { e ->
-                // Resim yoksa veya başka bir hata oluşursa, bu hatayı görmezden gelip devam edebiliriz.
-                // Çünkü ana hedef Auth ve Firestore verilerini silmek.
                 Log.w(TAG, "Error deleting profile image from Storage (may not exist)", e)
                 onComplete()
             }
@@ -190,29 +206,27 @@ class SettingsFragment : Fragment() {
                     navigateToOnboarding()
                 } else {
                     Log.e(TAG, "Error deleting user account from Firebase Auth", task.exception)
-                    // Bu hata genellikle yeniden kimlik doğrulama gerektirir.
-                    // Kullanıcıya bilgi verip, tekrar giriş yapmasını isteyebilirsiniz.
                     Toast.makeText(context, getString(R.string.error_deleting_account, task.exception?.message), Toast.LENGTH_LONG).show()
-                    // Gerekirse burada yeniden kimlik doğrulama akışını başlatın.
                 }
             }
     }
 
     private fun navigateToOnboarding() {
+        // Navigasyon yığınını temizleyerek Onboarding ekranına git.
+        val startDestinationId = findNavController().graph.startDestinationId
         val navOptions = NavOptions.Builder()
-            .setPopUpTo(R.id.main_activity_nav, true) // Navigasyon grafiğinizin root ID'si
+            .setPopUpTo(startDestinationId, true)
             .build()
         findNavController().navigate(actionSettingsToOnboarding, null, navOptions)
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBarSettings.visibility = if (isLoading) View.VISIBLE else View.GONE
-        // Butonları devre dışı bırak/etkinleştir
-        val enableButtons = !isLoading
-        binding.buttonEditProfile.isEnabled = enableButtons
-        binding.switchNotifications.isEnabled = enableButtons
-        binding.switchTheme.isEnabled = enableButtons
-        binding.buttonDeleteAccount.isEnabled = enableButtons
+        val enableViews = !isLoading
+        binding.buttonEditProfile.isEnabled = enableViews
+        binding.switchNotifications.isEnabled = enableViews
+        binding.switchTheme.isEnabled = enableViews
+        binding.buttonDeleteAccount.isEnabled = enableViews
     }
 
     override fun onDestroyView() {

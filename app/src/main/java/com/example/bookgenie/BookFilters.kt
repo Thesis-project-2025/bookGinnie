@@ -6,7 +6,6 @@ data class BookFilters(
     val selectedGenres: List<String> = emptyList(),
     val minRating: Double? = null,
     val sortBy: SortOption = SortOption.RELEVANCE,
-    val author: String? = null, // Ekstra filtre: Yazar
     val publicationYear: Int? = null // Ekstra filtre: Yayın Yılı
 )
 

@@ -18,72 +18,74 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:elevation="10dp"/> <FrameLayout
-    android:id="@+id/toolbarFrameLayout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+        android:elevation="10dp"/>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarMainPage"
+    <FrameLayout
+        android:id="@+id/toolbarFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/customToolbarBackgroundColor"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarMainPage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="?attr/customToolbarBackgroundColor"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme">
 
-            <ImageView
-                android:id="@+id/bookGenieLogo"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginStart="0dp"
-                android:src="@drawable/logotransparent_white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchMainpage"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/rounded_background"
-                android:elevation="2dp"
-                android:queryHint="Search for your favorite book"
-                android:textColor="?attr/aydinlikta_mor_karanlikta_beyaz"
-                android:textColorHint="?attr/aydinlikta_mor_karanlikta_beyaz"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/filterButton"
-                app:layout_constraintStart_toEndOf="@+id/bookGenieLogo"
-                app:layout_constraintTop_toTopOf="parent"
-                app:searchIcon="@drawable/baseline_search_24" />
+                <ImageView
+                    android:id="@+id/bookGenieLogo"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/logotransparent_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/filterButton"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:layout_marginEnd="10dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                android:contentDescription="Filter Search Results"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                app:tint="?attr/aydinlikta_mor_karanlikta_beyaz"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchMainpage"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/rounded_background"
+                    android:elevation="2dp"
+                    android:queryHint="Search for your favorite book"
+                    android:textColor="?attr/aydinlikta_mor_karanlikta_beyaz"
+                    android:textColorHint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/filterButton"
+                    app:layout_constraintStart_toEndOf="@+id/bookGenieLogo"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:searchIcon="@drawable/baseline_search_24" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.appcompat.widget.Toolbar>
-</FrameLayout>
+                <ImageButton
+                    android:id="@+id/filterButton"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:contentDescription="Filter Search Results"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:tint="?attr/aydinlikta_mor_karanlikta_beyaz"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </FrameLayout>
 
 
     <androidx.core.widget.NestedScrollView
@@ -97,6 +99,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbarFrameLayout">
 
         <LinearLayout
+            android:id="@+id/scrollViewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -114,66 +117,14 @@
                 android:paddingEnd="30dp" />
 
             <TextView
-                android:id="@+id/tvTopRatedByCountBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="Top Rated Books"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTopRatedByCountBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal" />
-
-            <TextView
-                android:id="@+id/tvHighRatedFictionBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="High-Rated Fiction Books"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHighRatedFictionBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal" />
-
-            <TextView
-                android:id="@+id/tvHighRatedNonFictionBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="High-Rated Nonfiction Books"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvHighRatedNonFictionBooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal" />
-
-            <TextView
                 android:id="@+id/tvForYou"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="Sizin İçin Önerilenler"
+                android:text="Recommended For You"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -191,7 +142,9 @@
                 android:id="@+id/tvSimilarTo1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Similar to..."
                 android:textColor="?android:attr/textColorPrimary"
@@ -211,7 +164,9 @@
                 android:id="@+id/tvSimilarTo2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
                 android:text="Similar to..."
                 android:textColor="?android:attr/textColorPrimary"
@@ -227,73 +182,16 @@
                 android:orientation="horizontal"
                 android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tvRandomGenre1"
+            <LinearLayout
+                android:id="@+id/dynamic_categories_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="Genre 1"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRandomGenre1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tvRandomGenre2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="Genre 2"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRandomGenre2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tvRandomGenre3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:text="Genre 3"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRandomGenre3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal"
-                android:visibility="gone" />
-
-
-            <androidx.recyclerview.widget.RecyclerView
+                android:orientation="vertical" />
+            <View
                 android:id="@+id/space"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal" />
+                android:layout_marginBottom="16dp"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -328,4 +226,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.3" /> </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintVertical_bias="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

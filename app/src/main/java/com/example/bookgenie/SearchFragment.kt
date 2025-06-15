@@ -166,16 +166,41 @@ class SearchFragment : Fragment() {
 
     private fun setupSearchView() {
         val searchView = binding.searchBar
+        // SearchView içindeki EditText bileşenine erişiyoruz.
         val searchEditText = searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
 
+        //--- YAZI RENGİ DÜZELTMESİ BAŞLANGICI ---//
         try {
-            val beigeColor = ContextCompat.getColor(requireContext(), R.color.beige)
-            searchEditText.setTextColor(beigeColor)
-            searchEditText.setHintTextColor(beigeColor)
-        } catch (e: Resources.NotFoundException) {
-            Log.e("SearchFragment", "R.color.beige renk kaynağı bulunamadı.", e)
-        }
+            // Rengi sabit bir dosyadan (örn: R.color.beige) almak yerine,
+            // mevcut temanın birincil metin rengini (textColorPrimary) alıyoruz.
+            // Bu, temanız açıkken koyu renk, koyu temadayken açık renk olmasını sağlar.
+            val typedValue = android.util.TypedValue()
+            requireContext().theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true)
+            val textColor = ContextCompat.getColor(requireContext(), typedValue.resourceId)
 
+            // Aynı şekilde ipucu rengini (hint) de temadan alıyoruz.
+            requireContext().theme.resolveAttribute(android.R.attr.textColorHint, typedValue, true)
+            val hintColor = ContextCompat.getColor(requireContext(), typedValue.resourceId)
+
+            // Elde ettiğimiz dinamik renkleri metin ve ipucu için atıyoruz.
+            searchEditText.setTextColor(textColor)
+            searchEditText.setHintTextColor(hintColor)
+
+        } catch (e: Exception) {
+            // Bir hata olması durumunda (örn: tema kaynağı bulunamazsa), güvenli bir renge geri dönebiliriz.
+            Log.e("SearchFragment", "SearchView renkleri ayarlanırken hata oluştu.", e)
+            try {
+                // Güvenli fallback: Siyah metin, gri ipucu
+                searchEditText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                searchEditText.setHintTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
+            } catch (e2: Resources.NotFoundException) {
+                Log.e("SearchFragment", "Fallback renkleri de yüklenemedi.", e2)
+            }
+        }
+        //--- YAZI RENGİ DÜZELTMESİ SONU ---//
+
+
+        // Metodun geri kalanı sizin kodunuzdaki gibi, herhangi bir değişiklik gerekmiyor.
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 if(selectedGenre == null) {

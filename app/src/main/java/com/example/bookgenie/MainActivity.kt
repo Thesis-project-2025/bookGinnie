@@ -1,31 +1,37 @@
 package com.example.bookgenie
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat // ContextCompat importu eklendi
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.bookgenie.databinding.ActivityMainBinding
-import com.example.bookgenie.drawable.AnimatedGradientDrawable // Drawable importu
-import com.google.firebase.auth.FirebaseAuth // FirebaseAuth importu eklendi
-import androidx.navigation.NavOptions
+import com.example.bookgenie.drawable.AnimatedGradientDrawable
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var sharedPreferences: SharedPreferences
     private var animatedBackground: AnimatedGradientDrawable? = null
     private var isAnimatedBgActiveForCurrentDest = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 1. Tema, herhangi bir UI oluşturulmadan ÖNCE uygulanmalıdır.
+        applyThemeOnAppStartup()
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Renkleri al (Onboarding'deki gibi)
+        // Renkleri al
         val colorDayStart = ContextCompat.getColor(this, R.color.Shadowed_Earth_1)
         val colorDayEnd = ContextCompat.getColor(this, R.color.Shadowed_Earth_3)
         val colorNightStart = ContextCompat.getColor(this, R.color.Shadowed_Earth_6)
@@ -41,21 +47,23 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
-        // --- OTURUM KONTROLÜ ---
+        // 2. Oturum Kontrolü: NavController başlatıldıktan sonra yapılmalı.
         val auth = FirebaseAuth.getInstance()
         if (auth.currentUser != null) {
             // Kullanıcı zaten giriş yapmış.
-            // Eğer şu anki ekran onboardingFragment ise, MainPageFragment'a yönlendir
-            // ve onboardingFragment'ı yığından temizle.
-            if (navController.currentDestination?.id == R.id.onboardingFragment) {
+            // Navigasyon grafiğinin başlangıç noktası (genellikle Onboarding veya giriş ekranları)
+            // yerine doğrudan ana sayfaya yönlendir.
+            val navGraph = navController.navInflater.inflate(R.navigation.main_activity_nav)
+            val startDestinationId = navGraph.startDestinationId
+
+            if (navController.currentDestination?.id == startDestinationId) {
                 val navOptions = NavOptions.Builder()
-                    .setPopUpTo(R.id.main_activity_nav, true) // Navigasyon grafiğinin başına kadar temizle
+                    .setPopUpTo(startDestinationId, true) // Başlangıç ekranını yığından temizle
                     .build()
                 navController.navigate(R.id.mainPageFragment, null, navOptions)
             }
         }
-        // --- OTURUM KONTROLÜ BİTTİ ---
-
+        // --- Oturum Kontrolü Bitti ---
 
         val bottomAppBar = binding.bottomAppBar
         val fab = binding.fab
@@ -64,8 +72,7 @@ class MainActivity : AppCompatActivity() {
             val shouldShowAnimatedBackground = when (destination.id) {
                 R.id.onboardingFragment,
                 R.id.logInFragment,
-                R.id.signUpFragment
-                -> true
+                R.id.signUpFragment -> true
                 else -> false
             }
 
@@ -76,9 +83,12 @@ class MainActivity : AppCompatActivity() {
                 animatedBackground?.startAnimation()
             } else {
                 animatedBackground?.stopAnimation()
-                binding.root.setBackgroundColor(
-                    ContextCompat.getColor(this, R.color.Shadowed_Earth_1)
-                )
+                // Arka planı temanın rengiyle eşleştir.
+                // Bu, temanın anında uygulanması için önemlidir.
+                val typedArray = theme.obtainStyledAttributes(intArrayOf(android.R.attr.colorBackground))
+                val backgroundColor = typedArray.getColor(0, 0)
+                typedArray.recycle()
+                binding.root.setBackgroundColor(backgroundColor)
             }
 
             val shouldHideBottomBar = when (destination.id) {
@@ -88,8 +98,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.fairyTaleFragment,
                 R.id.generationFragment,
                 R.id.speechFragment,
-                R.id.bookDetailsFragment
-                -> true
+                R.id.bookDetailsFragment -> true
                 else -> false
             }
 
@@ -125,6 +134,25 @@ class MainActivity : AppCompatActivity() {
             binding.fab.startAnimation(pulseAnimation)
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun applyThemeOnAppStartup() {
+        sharedPreferences = getSharedPreferences(SettingsFragment.PREFS_NAME, 0)
+
+        // Kullanıcının daha önce bir seçim yapıp yapmadığını kontrol et.
+        // Eğer bir kayıt yoksa, sistem ayarını takip et.
+        if (!sharedPreferences.contains(SettingsFragment.KEY_DARK_MODE)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            return
+        }
+
+        // Eğer kayıt varsa, kullanıcının seçimini uygula.
+        val isDarkMode = sharedPreferences.getBoolean(SettingsFragment.KEY_DARK_MODE, false)
+        if (isDarkMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
 

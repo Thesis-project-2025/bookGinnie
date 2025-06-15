@@ -81,26 +81,6 @@
                     android:textColor="?android:attr/textColorPrimary"/>
             </RadioGroup>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Author Name (Exact match)"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:textColor="?android:attr/textColorSecondary"/>
-
-            <EditText
-                android:id="@+id/etAuthor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter author name"
-                android:inputType="textCapWords"
-                android:maxLines="1"
-                android:layout_marginBottom="16dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textColorHint="?android:attr/textColorHint"/>
-
 
             <TextView
                 android:layout_width="wrap_content"

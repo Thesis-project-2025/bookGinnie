@@ -48,7 +48,7 @@ class UserRatingsFragment : Fragment() {
 
     private fun convertToInt(value: Any?, default: Int = 0): Int {
         return when (value) {
-            is Number -> value.toInt()
+            is Number -> value.toInt() // Handles Long, Double, etc. to Int
             is String -> value.toIntOrNull() ?: default
             else -> default
         }
@@ -65,40 +65,48 @@ class UserRatingsFragment : Fragment() {
     @Suppress("UNCHECKED_CAST")
     private fun parseBookFromDocument(document: DocumentSnapshot): Books? {
         try {
-            val title = safeGetString(document.getString("title"))
-            // Assuming book_id in Firestore is Long, but Books.book_id is Int
-            val bookId = document.getLong("book_id")?.toInt() ?: 0
+            val title = safeGetString(document.get("title")) // Düzeltme: document.getString yerine document.get
+            val bookIdValue = document.get("book_id")
+            Log.d("ParseBook", "Document ${document.id} - book_id raw value: $bookIdValue, type: ${bookIdValue?.javaClass?.simpleName}")
+
+            val bookId = when (bookIdValue) {
+                is Number -> bookIdValue.toInt()
+                else -> {
+                    Log.w("ParseBook", "Document ${document.id} - book_id is not a Number or is null. Value: $bookIdValue")
+                    0
+                }
+            }
 
             if (title.isBlank() || bookId == 0) {
-                Log.w("ParseBook", "Skipping document ${document.id}: Missing title or valid book_id. Title: '$title', ID: $bookId")
+                Log.w("ParseBook", "Skipping document ${document.id}: Missing title ('$title') or valid book_id ($bookId).")
                 return null
             }
 
-            val firestoreTitleLowercase = document.getString("title_lowercase")
+            val firestoreTitleLowercase = safeGetString(document.get("title_lowercase")) // Düzeltme
 
             return Books(
                 authors = convertToInt(document.get("authors")),
-                author_name = safeGetString(document.getString("author_name")),
+                author_name = safeGetString(document.get("author_name")), // Düzeltme
                 average_rating = document.getDouble("average_rating") ?: 0.0,
                 book_id = bookId,
-                description = safeGetString(document.getString("description")),
-                format = safeGetString(document.getString("format")),
+                description = safeGetString(document.get("description")), // Düzeltme
+                format = safeGetString(document.get("format")), // DÜZELTME: getString yerine get kullanıldı
                 genres = (document.get("genres") as? List<*>)?.mapNotNull { it?.toString() } ?: emptyList(),
-                imageUrl = safeGetString(document.getString("image_url")), // Use "image_url" from Firestore
+                imageUrl = safeGetString(document.get("image_url")), // DÜZELTME: getString yerine get kullanıldı
                 is_ebook = document.getBoolean("is_ebook") ?: false,
-                isbn = safeGetString(document.get("isbn")),
-                isbn13 = safeGetString(document.get("isbn13")), // This will handle Double or String from Firestore
-                kindle_asin = safeGetString(document.getString("kindle_asin")),
-                language_code = safeGetString(document.getString("language_code")),
+                isbn = safeGetString(document.get("isbn")), // Düzeltme
+                isbn13 = safeGetString(document.get("isbn13")), // Düzeltme
+                kindle_asin = safeGetString(document.get("kindle_asin")), // DÜZELTME: getString yerine get kullanıldı
+                language_code = safeGetString(document.get("language_code")), // DÜZELTME: getString yerine get kullanıldı
                 num_pages = convertToInt(document.get("num_pages")),
                 publication_day = (document.get("publication_day") as? List<*>)?.mapNotNull { it?.toString() } ?:
-                (safeGetString(document.get("publication_day")).takeIf { it.isNotBlank() }?.let { listOf(it) } ?: emptyList()),
+                (safeGetString(document.get("publication_day")).takeIf { it.isNotBlank() }?.let { listOf(it) } ?: emptyList()), // Düzeltme
                 publication_month = convertToInt(document.get("publication_month")),
                 publication_year = convertToInt(document.get("publication_year")),
-                publisher = safeGetString(document.getString("publisher")),
+                publisher = safeGetString(document.get("publisher")), // Düzeltme
                 title = title,
                 rating_count = convertToInt(document.get("rating_count")),
-                title_lowercase = if (!firestoreTitleLowercase.isNullOrBlank()) firestoreTitleLowercase else title.lowercase()
+                title_lowercase = if (firestoreTitleLowercase.isNotBlank()) firestoreTitleLowercase else title.lowercase()
             )
         } catch (e: Exception) {
             Log.e("ParseBook", "Error parsing book document ${document.id} to Book object: ${e.message}", e)
@@ -127,6 +135,7 @@ class UserRatingsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        if (!isAdded) return
         userRatedBooksAdapter = UserRatedBooksAdapter(requireContext(), ratedBooksDisplayList)
         binding.rvUserRatedBooks.apply {
             layoutManager = LinearLayoutManager(context)
@@ -149,9 +158,11 @@ class UserRatingsFragment : Fragment() {
                         .await()
 
                     val userRatingDocs = userRatingsQuery.documents
+                    if (!isAdded || _binding == null || !isActive) return@launch
                     binding.tvTotalRatingsCount.text = getString(R.string.total_ratings_count_placeholder, userRatingDocs.size)
 
                     if (userRatingDocs.isEmpty()) {
+                        if (!isAdded || _binding == null || !isActive) return@launch
                         binding.tvNoRatingsMessage.text = getString(R.string.no_books_rated_yet)
                         binding.tvNoRatingsMessage.visibility = View.VISIBLE
                         binding.progressBarUserRatings.visibility = View.GONE
@@ -160,45 +171,56 @@ class UserRatingsFragment : Fragment() {
                     }
 
                     val ratedBookEntries = userRatingDocs.mapNotNull { doc ->
-                        doc.toObject<UserRating>() // UserRating class should handle its own fields
+                        doc.toObject<UserRating>()
                     }
 
-                    val bookIdsToFetch = ratedBookEntries.mapNotNull { it.bookId }.distinct()
+                    val bookIdsToFetch: List<Int> = ratedBookEntries.mapNotNull { it.bookId?.toInt() }.distinct()
+                    Log.d("UserRatingsFragment", "Book IDs to fetch from books_data (as Int): $bookIdsToFetch")
+
 
                     if (bookIdsToFetch.isNotEmpty()) {
-                        val fetchedBooksMap = mutableMapOf<Long, Books>()
-                        bookIdsToFetch.chunked(30).forEach { chunkOfIds ->
-                            if (chunkOfIds.isNotEmpty()) {
+                        val fetchedBooksMap = mutableMapOf<Int, Books>()
+                        bookIdsToFetch.chunked(30).forEach { chunkOfIntIds ->
+                            if (chunkOfIntIds.isNotEmpty()) {
+                                Log.d("UserRatingsFragment", "Fetching book details for IDs (Int): $chunkOfIntIds")
                                 val booksQuery = db.collection("books_data")
-                                    .whereIn("book_id", chunkOfIds) // Assuming books_data.book_id is Long
+                                    .whereIn("book_id", chunkOfIntIds)
                                     .get()
                                     .await()
+                                if (!isActive) return@launch
+                                Log.d("UserRatingsFragment", "Found ${booksQuery.size()} books for chunk: $chunkOfIntIds")
                                 booksQuery.documents.forEach { bookDoc ->
-                                    // *** USE MANUAL PARSING HERE ***
                                     val book = parseBookFromDocument(bookDoc)
-                                    val firestoreBookId = bookDoc.getLong("book_id") // Get the ID used for mapping
-                                    if (book != null && firestoreBookId != null) {
-                                        fetchedBooksMap[firestoreBookId] = book
+                                    if (book != null) {
+                                        fetchedBooksMap[book.book_id] = book
+                                        Log.d("UserRatingsFragment", "Fetched and parsed book: ${book.title} (ID: ${book.book_id})")
+                                    } else {
+                                        Log.w("UserRatingsFragment", "Failed to parse book from document: ${bookDoc.id}. Check 'Skipping document' logs from ParseBook.")
                                     }
                                 }
                             }
                         }
+                        Log.d("UserRatingsFragment", "Total books fetched and mapped: ${fetchedBooksMap.size}")
 
                         ratedBookEntries.forEach { userRatingEntry ->
-                            userRatingEntry.bookId?.let { bookIdLong -> // bookId from UserRating is Long
-                                val bookDetail = fetchedBooksMap[bookIdLong]
+                            userRatingEntry.bookId?.toInt()?.let { bookIdInt ->
+                                val bookDetail = fetchedBooksMap[bookIdInt]
                                 if (bookDetail != null && userRatingEntry.rating != null) {
                                     ratedBooksDisplayList.add(
                                         RatedBookDisplay(
-                                            book = bookDetail, // bookDetail is now a parsed Books object
+                                            book = bookDetail,
                                             userRating = userRatingEntry.rating.toFloat()
                                         )
                                     )
+                                } else {
+                                    Log.w("UserRatingsFragment", "Book detail not found in map or rating is null for rated bookId (Int): $bookIdInt. Book found in map: ${bookDetail != null}, Rating: ${userRatingEntry.rating}")
                                 }
                             }
                         }
                     }
+                    Log.d("UserRatingsFragment", "Final ratedBooksDisplayList size: ${ratedBooksDisplayList.size}")
 
+                    if (!isAdded || _binding == null || !isActive) return@launch
                     if (ratedBooksDisplayList.isEmpty() && userRatingDocs.isNotEmpty()) {
                         binding.tvNoRatingsMessage.text = getString(R.string.could_not_load_rated_book_details)
                         binding.tvNoRatingsMessage.visibility = View.VISIBLE
