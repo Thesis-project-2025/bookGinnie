@@ -1,24 +1,23 @@
 #  bookGinnie
 
-Bu proje, TÜBİTAK 2209-A desteğiyle geliştirilen bir Android tabanlı mobil uygulamadır. Kullanıcılara hem kişiselleştirilmiş kitap önerileri sunmakta hem de yaşa uygun özgün masallar üretmekte ve üretilen masalları sesli şekilde sunmaktadır.
+This project is an Android-based mobile application developed with the support of TÜBİTAK 2209-A. It offers users personalized book recommendations and generates age-appropriate original fairy tales, which are also presented in audio format.
 
-##  Proje Özellikleri
+##  Project Features
 
-###  Kişisel Kitap Öneri Sistemi
-- **Veri**: 28 milyon kitap etkileşimi verisi
-- **Model**: PySpark kullanılarak ALS (Alternating Least Squares) algoritması ile eğitim
-- **Servis**: Flask tabanlı REST API ile AWS EC2 (t2.micro) üzerinde canlı servis
+###  Personalized Book Recommendation System
+- **Dataset**: 28 million book interaction records
+- **Model**: Trained using the ALS (Alternating Least Squares) algorithm with PySpark
+- **Service**: Served as a live REST API using Flask on AWS EC2 (t2.micro)
 
-###  Masal Üretimi
-- **Model**: Hugging Face Spaces üzerinde barındırılan, QLoRA ile ince ayarlanmış dil modeli (LLM)
-- **Girdi**: Kullanıcının belirttiği anahtar kelimeler, yaş ve diğer tercihlere göre masal üretimi
-- **Servis**: FastAPI ile üretim API’si olarak sunuldu
+###  Fairy Tale Generation
+- **Model**: Fine-tuned LLM using QLoRA, hosted on Hugging Face Spaces
+- **Input**: Tales generated based on user-provided keywords, age, and preferences
+- **Service**: Delivered via a FastAPI-based API
 
-###  Seslendirme
-- **Teknoloji**: Azure Text-to-Speech (TTS) entegrasyonu
-- **Amaç**: Üretilen masalların çocuklar tarafından sesli olarak dinlenebilmesini sağlamak
+###  Text-to-Speech Narration
+- **Technology**: Integrated with Microsoft Azure Text-to-Speech (TTS)
+- **Purpose**: Allows children to listen to the generated fairy tales in audio format, enhancing accessibility and engagement
 
 ##  Platform
-- **Mobil Uygulama**: Android (Kotlin, Jetpack, MVVM mimarisi)
-- **API Servisleri**: Python (Flask & FastAPI)
-
+- **Mobile Application**: Android (Kotlin, Jetpack, MVVM architecture)
+- **API Services**: Python (Flask & FastAPI)
